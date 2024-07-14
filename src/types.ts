@@ -1,4 +1,5 @@
 
 export type Media = {
-    name: string
+    name: string,
+    entryID: number
 }
