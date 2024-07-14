@@ -21,7 +21,7 @@
         <input type="text" placeholder="Search.." />
     </nav>
     <div id="library-container">
-        <MediaComponent v-for="m in media" :key="m.name" :media="m"/>
+        <MediaComponent v-for="m in media" :key="m.name" :data="m"/>
     </div>
 </template>
 
