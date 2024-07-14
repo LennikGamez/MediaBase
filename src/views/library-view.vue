@@ -1,6 +1,16 @@
 
 <script setup lang="ts">
     import MediaComponent from "../components/media-component.vue";
+    import { Media } from "../types";
+    import { ref } from "vue";
+    
+    const media = ref(Array<Media>());
+
+    function fetchMedia(){
+        fetch('http://localhost:8000/media').then(res => res.json()).then(data => media.value = data)
+    }
+
+    fetchMedia();
 
 </script>
 
@@ -11,7 +21,7 @@
         <input type="text" placeholder="Search.." />
     </nav>
     <div id="library-container">
-        <MediaComponent />
+        <MediaComponent v-for="m in media" :key="m.name" :media="m"/>
     </div>
 </template>
 
