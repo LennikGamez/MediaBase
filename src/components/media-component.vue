@@ -17,7 +17,7 @@
 
     function rerouteToDetails(){
         console.log("reroute to details of " + props.data.name);
-        router.push({path: '/detail/' + props.data.entryID})
+        router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type})
     }
 
 </script>
