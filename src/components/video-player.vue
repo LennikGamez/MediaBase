@@ -1,20 +1,13 @@
 <script setup lang="ts">
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
-    import { Detail } from '../types';
     import InactivityTimer from '../inactivity-timer';
 
     var timelineDrag = false;
     var fullscreenState = false;
 
     const route = useRoute();
-    const props = defineProps({
-        data: {
-            type: Object as () => Detail,
-            required: true
-        }
-    })
-
+   
     const videoElement = ref<HTMLVideoElement | null>(null);
     const videoContainer = ref<HTMLDivElement | null>(null);
     const videoPlayerContainer = ref<HTMLDivElement | null>(null);
@@ -187,7 +180,7 @@
 
 <template>
     <div class="video-player" ref="videoPlayerContainer">
-                <div class="video-container" ref="videoContainer">
+                <div class="video-container paused" ref="videoContainer">
                     <div class="video-controls-container">
                         <div class="timeline-container" ref="timeline" @touchstart="startSeeking" @mousedown="startSeeking">
                             <div class="timeline">
