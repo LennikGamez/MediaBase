@@ -1,14 +1,25 @@
 <script lang="ts" setup>
     import VideoPlayer from '../components/video-player.vue';
+    import { ref } from 'vue';
+    import { useRoute } from 'vue-router';
+    import { Detail } from '../types';
+
+    const route = useRoute();
+    // load all information about the selected entry
+    const data = ref({} as Detail);
+    fetch('http://localhost:8000/detail/' + route.params.entryID).then(res => res.json()).then(detail => data.value = detail).then(() => {
+        console.log(data.value);
+    });
+
 </script>
 
 <template>
     <div id="wrapper">
-        <VideoPlayer />
+        <VideoPlayer :data="data"/>
         <div id="details">
-            <h1 id="title">S.W.A.T</h1>
+            <h1 id="title">{{ data.detail.name }}</h1>
             <p id="duration">1:30h</p>
-            <p id="description">Description</p>
+            <p id="description">{{ data.detail.description }}</p>
             <div id="buttons">
                 <button id="play-btn" class="btn focusable" tabindex="0">Play</button>
                 <select title="versions" id="version-btn" class="btn focusable" tabindex="0">
