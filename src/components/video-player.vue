@@ -1,16 +1,61 @@
 <script setup lang="ts">
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
+    import { Detail } from '../types';
 
     const route = useRoute();
+    const props = defineProps({
+        data: {
+            type: Object as () => Detail,
+            required: true
+        }
+    })
 
-    const videoSrc = ref("http://localhost:8000/stream/episode/" + route.params.entryID); 
+    const videoElement = ref<HTMLVideoElement | null>(null);
+    const videoContainer = ref<HTMLDivElement | null>(null);
+    const videoPlayerContainer = ref<HTMLDivElement | null>(null);
+
+    const currentTimeSpan = ref<HTMLSpanElement | null>(null);
+    const durationSpan = ref<HTMLSpanElement | null>(null);
+    const videoSrc = ref('http://localhost:8000/stream/show/2/episode/2/Deutsch'); 
+
+
+    function formatTime(time: number){
+        if (isNaN(time)) return formatTime(0);
+        return new Date(time * 1000).toISOString().substr(14, 5);
+    }
+
+    function play(){
+        if (!videoElement.value) return;
+        videoElement.value.paused ? videoElement.value.play() : videoElement.value.pause();
+    }
+    function onPlay(){
+        if (!videoContainer.value) return;
+        videoContainer.value.classList.remove("paused");
+    }
+    function onPause(){
+        if (!videoContainer.value) return;
+        videoContainer.value.classList.add("paused");
+    }
+
+
+
+    function updateTimeline(){
+        if (!videoPlayerContainer.value || !videoElement.value) return;
+        if (!currentTimeSpan.value || !durationSpan.value) return;
+        const percent = (videoElement.value.currentTime / videoElement.value.duration);
+        videoPlayerContainer.value.style.setProperty('--progress', percent.toString());
+
+        currentTimeSpan.value.innerHTML = formatTime(videoElement.value.currentTime);
+        durationSpan.value.innerHTML = formatTime(videoElement.value.duration);
+    }
+
 </script>
 
 
 <template>
-    <div class="video-player">
-                <div class="video-container hidden">
+    <div class="video-player" ref="videoPlayerContainer">
+                <div class="video-container" ref="videoContainer">
                     <div class="video-controls-container">
                         <div class="timeline-container">
                             <div class="timeline">
@@ -19,14 +64,14 @@
                         </div>
                         <div class="controls">
                             <div class="left-controls">
-                                <button class="control-element play-btn">
+                                <button class="control-element play-btn" @click="play">
                                     <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z"/></svg>
                                     <svg class="pause-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"/></svg>
                                 </button>
                                 <div class="time-display">
-                                    <span class="current-time">0:00</span>
+                                    <span class="current-time" ref="currentTimeSpan">0:00</span>
                                     /
-                                    <span class="total-time">0:00</span>
+                                    <span class="total-time" ref="durationSpan">0:00</span>
                                 </div>
                             </div>
                             <div class="right-controls">
@@ -36,7 +81,7 @@
                         </div>
                     </div>
 
-                    <video autoplay playsinline>
+                    <video playsinline ref="videoElement" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline">
                         <source id="source" :src="videoSrc">
                     </video>
                 </div>
@@ -44,5 +89,176 @@
 </template>
 
 <style lang="css" scoped>
+            .video-player{
+                --hover-fade-time: .3s;
+                --timeline-size: 2px;
+                --video-control-inset: 8px;
+                display: flex;
+                position: relative;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                user-select: none;
+            }
 
+    	    .video-player,
+            .video-container{
+                width: 100%;
+                height: fit-content;
+                position: relative;
+            }
+            .video-container::before{
+                transition: opacity var(--hover-fade-time) ease-in-out;
+                content: '';
+                position: absolute;
+                bottom: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent);
+                width: 100%;
+                aspect-ratio: 6/1;
+                opacity: 0;
+                pointer-events:  none;
+                z-index: 99;
+            }
+
+            .video-container.cursor-none{
+                pointer-events: none;
+            }
+            .video-player:has(.video-container.cursor-none){
+                cursor: none;
+            }
+            .fullscreen{
+                display: flex;
+                justify-content: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: black;
+                z-index: 1000;
+            }
+
+            .video-container:not(.cursor-none) .video-controls-container,
+            .video-container:not(.cursor-none).video-container::before{
+                opacity: 1;
+            }
+
+            .video-container.paused .video-controls-container,
+            .video-container.paused:before,
+            .video-container.paused .video-container::before{
+                /* if paused controls are always visible */
+                opacity: 1;
+            }
+            .video-container .play-icon,
+            .video-container.paused .pause-icon{
+                 display:none
+            }
+
+            .video-container.paused .play-icon,
+            .video-container .pause-icon{
+                display: block;
+            }
+
+            .video-controls-container{
+                transition: opacity var(--hover-fade-time) ease-in-out;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+                opacity: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                padding: var(--video-control-inset);
+
+            }
+
+            .controls{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .left-controls,
+            right-controls{
+                display: flex;
+                gap: 5px;
+                align-items: center;
+            }
+            .time-display{
+                display: flex;
+                align-items: center;
+            }
+
+
+            .control-element{
+                background-color: transparent;
+                border-style: none;
+                outline: none;
+                color: white;
+                padding: 0px;        
+            }
+            .control-element:hover{
+                cursor: pointer;
+                opacity: .5;
+            }
+
+            .timeline-container{
+                padding-block: 12px;
+            }
+
+            .timeline{
+                position: relative;
+                left: 0;
+                right: 0;
+                height: var(--timeline-size);
+                background-color: rgba(255, 255, 255, .5);
+                z-index: 101;
+                transition: opacity var(--hover-fade-time) ease-in-out;
+            }
+
+            .timeline::before{
+                content: '';
+                position: absolute;
+                height: var(--timeline-size);
+                left: 0;
+                right: calc(100% - var(--progress) * 100%);
+                background-color: red;
+                z-index: 101;
+            }
+
+            .thumb-indicator{
+                display: none;
+                background-color: red;
+                border-radius: 50%;
+                position: absolute;
+                bottom: 50%;
+                transform: translateY(50%) translateX(-50%);
+                left: calc(var(--progress) * 100%);
+                width: 12px;
+                aspect-ratio: 1;
+
+            }
+
+            .timeline-container:hover .thumb-indicator{
+                display: block;
+            }
+
+            video{
+                display: flex;
+                max-width: 100%;
+                width: 100%;
+                object-fit: contain;
+            }
+            .video-container.fullscreen video{
+                height: 100%;
+                width: auto;;
+            }
+
+            img{
+                max-width: 100%;
+                width: 100%;
+            }
 </style>
