@@ -2,6 +2,9 @@
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
     import { Detail } from '../types';
+    import InactivityTimer from '../inactivity-timer';
+
+    var timelineDrag = false;
 
     const route = useRoute();
     const props = defineProps({
@@ -17,7 +20,44 @@
 
     const currentTimeSpan = ref<HTMLSpanElement | null>(null);
     const durationSpan = ref<HTMLSpanElement | null>(null);
+    const timeline = ref<HTMLDivElement | null>(null);
     const videoSrc = ref('http://localhost:8000/stream/show/2/episode/2/Deutsch'); 
+
+    const inactivityTimer = new InactivityTimer(()=>hideCursor(), ()=>showCursor(), 2000);
+
+
+    function hideCursor(){
+        videoContainer.value?.classList.add('cursor-none');
+    }
+
+    function showCursor(){
+        videoContainer.value?.classList.remove('cursor-none');
+    }
+
+    document.addEventListener('mouseup', (e)=>{
+            inactivityTimer.restart();
+            if(!timelineDrag) return;
+            timelineDrag = false;
+            videoElement.value?.play();
+            setTimelineByMouseEvent(e);
+        })
+        document.addEventListener('touchend', (e)=>{
+            inactivityTimer.restart();
+            if(!timelineDrag) return;
+            timelineDrag = false;
+            videoElement.value?.play();
+        })
+
+        document.addEventListener('mousemove', (event)=>{
+            inactivityTimer.restart();
+            if(!timelineDrag) return;
+            setTimelineByMouseEvent(event);
+        });
+        document.addEventListener('touchmove', (event)=>{
+            inactivityTimer.restart();
+            if(!timelineDrag) return;;
+            setTimelineByMouseEvent(event.touches[0]);
+        })
 
 
     function formatTime(time: number){
@@ -39,6 +79,25 @@
     }
 
 
+    function startSeeking(){
+        if (!timeline.value) return;
+        timelineDrag = true;
+        
+        videoElement.value?.pause();
+    }
+    
+
+    function setTimelineByMouseEvent(event: MouseEvent | Touch){
+        if (!timeline.value || !videoElement.value) return;
+        
+        const rect = timeline.value.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        const timeToSeek = (x / rect.width) * videoElement.value.duration;
+        videoElement.value.currentTime = timeToSeek;
+        updateTimeline();
+    }
+
+
 
     function updateTimeline(){
         if (!videoPlayerContainer.value || !videoElement.value) return;
@@ -57,7 +116,7 @@
     <div class="video-player" ref="videoPlayerContainer">
                 <div class="video-container" ref="videoContainer">
                     <div class="video-controls-container">
-                        <div class="timeline-container">
+                        <div class="timeline-container" ref="timeline" @touchstart="startSeeking" @mousedown="startSeeking">
                             <div class="timeline">
                                 <div class="thumb-indicator"></div>
                             </div>
@@ -112,7 +171,7 @@
                 transition: opacity var(--hover-fade-time) ease-in-out;
                 content: '';
                 position: absolute;
-                bottom: 0;
+                bottom: -1px;
                 background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent);
                 width: 100%;
                 aspect-ratio: 6/1;
