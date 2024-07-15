@@ -27,5 +27,17 @@
 
 
 <style scoped>
+    #library-container{
+        margin: 16px;
 
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        place-items: center;
+        height: auto;
+        /* display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: start; */
+    }
 </style>
