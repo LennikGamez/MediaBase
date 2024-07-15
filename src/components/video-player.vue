@@ -27,13 +27,12 @@
     const inactivityTimer = new InactivityTimer(()=>hideCursor(), ()=>showCursor(), 2000);
 
 
-    function hideCursor(){
-        videoContainer.value?.classList.add('cursor-none');
-    }
+    // events
 
-    function showCursor(){
-        videoContainer.value?.classList.remove('cursor-none');
-    }
+    document.addEventListener('webkitfullscreenchange', ()=>{handleFullscreenChange()});
+    document.addEventListener('mozfullscreenchange', ()=>{handleFullscreenChange()});
+    document.addEventListener('msfullscreenchange', ()=>{handleFullscreenChange()});
+    document.addEventListener('fullscreenchange', ()=>{handleFullscreenChange()});
 
     document.addEventListener('mouseup', (e)=>{
             inactivityTimer.restart();
@@ -66,6 +65,16 @@
         return new Date(time * 1000).toISOString().substr(14, 5);
     }
 
+    function hideCursor(){
+        videoContainer.value?.classList.add('cursor-none');
+    }
+
+    function showCursor(){
+        videoContainer.value?.classList.remove('cursor-none');
+    }
+
+    // play pause
+
     function play(){
         if (!videoElement.value) return;
         videoElement.value.paused ? videoElement.value.play() : videoElement.value.pause();
@@ -79,6 +88,7 @@
         videoContainer.value.classList.add("paused");
     }
 
+    // timeline
 
     function startSeeking(){
         if (!timeline.value) return;
@@ -110,6 +120,7 @@
         durationSpan.value.innerHTML = formatTime(videoElement.value.duration);
     }
 
+    // fullscreen
     function toggleFullscreen(){
         
         if(!videoSrc.value) return;
@@ -138,6 +149,11 @@
         fullscreenState = false;
     }
 
+    function handleFullscreenChange(){
+        if(document.fullscreenElement) return;
+        exitFullscreen();
+    }
+
 </script>
 
 
@@ -164,7 +180,10 @@
                             </div>
                             <div class="right-controls">
                                 <button class="control-element sub"><img src="../assets/control-icons/subtitles.svg"></button>
-                                <button class="control-element fullscreen-btn" @click="toggleFullscreen"><img src="../assets/control-icons/fullscreen.svg"></button>
+                                <button class="control-element fullscreen-btn" @click="toggleFullscreen">
+                                    <img src="../assets/control-icons/fullscreen.svg" id="fullscreen-icon">
+                                    <img src="../assets/control-icons/fullscreen-exit.svg" id="fullscreen-exit-icon">
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -342,7 +361,17 @@
             }
             .video-container.fullscreen video{
                 height: 100%;
-                width: auto;;
+                width: auto;
+            }
+
+            .video-container.fullscreen #fullscreen-icon,
+            .video-container:not(.fullscreen) #fullscreen-exit-icon{
+                display: none;
+            }
+
+            .video-container.fullscreen #fullscreen-exit-icon,
+            .video-container:not(.fullscreen) #fullscreen-icon{
+                display: block;
             }
 
             img{
