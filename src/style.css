@@ -12,3 +12,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+html{
+  height: 100vh;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+}
+
+body, #app {
+  height: 100%;
+}
+
