@@ -2,26 +2,38 @@
     import VideoPlayer from '../components/video-player.vue';
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
-    import { Detail } from '../types';
+    import { DetailMovie, DetailShow } from '../types';
 
+    var data: any;
     const route = useRoute();
+    const type = route.params.type;
     // load all information about the selected entry
-    const data = ref({"detail": {}} as Detail);
+    switch (type) {
+        case "0":
+            data = ref<DetailMovie | null>(null)
+            break;
+        case "1":
+            data = ref<DetailMovie | null>(null)
+            break;
+
+    }
+    // const data = ref<DetailShow | DetailMovie | null>(null)
     fetch('http://localhost:8000/detail/' + route.params.entryID).then(res => res.json()).then(detail => data.value = detail);
 
 </script>
 
 <template>
     <div id="wrapper">
-        <VideoPlayer :data="data"/>
+        <VideoPlayer/>
         <div id="details">
-            <h1 id="title">{{ data.detail.name }}</h1>
+            <h1 id="title">{{ data?.detail.name }}</h1>
             <p id="duration">1:30h</p>
-            <p id="description">{{ data.detail.description }}</p>
+            <p id="description">{{ data?.detail.description }}</p>
             <div id="buttons">
                 <button id="play-btn" class="btn focusable" tabindex="0">Play</button>
-                <select title="versions" id="version-btn" class="btn focusable" tabindex="0">
-                </select>
+                <div id="seasons" v-if="data?.detail.type == 1">
+                    <h3 v-for="(item, index) in data?.seasons" :key="index">{{ item }}</h3>
+                </div>
             </div>
         </div>
     </div>
