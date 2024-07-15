@@ -228,6 +228,7 @@
                 --hover-fade-time: .3s;
                 --timeline-size: 2px;
                 --video-control-inset: 8px;
+                --timeline-drag-buffer: 32px;
                 display: flex;
                 position: relative;
                 justify-content: center;
@@ -341,7 +342,8 @@
             }
 
             .timeline-container{
-                padding-block: 12px;
+                padding-bottom: 12px;
+                padding-top: var(--timeline-drag-buffer);
             }
 
             .timeline{
