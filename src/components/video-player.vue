@@ -5,6 +5,7 @@
     import InactivityTimer from '../inactivity-timer';
 
     var timelineDrag = false;
+    var fullscreenState = false;
 
     const route = useRoute();
     const props = defineProps({
@@ -109,6 +110,34 @@
         durationSpan.value.innerHTML = formatTime(videoElement.value.duration);
     }
 
+    function toggleFullscreen(){
+        
+        if(!videoSrc.value) return;
+        fullscreenState = !fullscreenState;
+        if (fullscreenState){
+            videoContainer.value?.classList.add('fullscreen');
+            videoPlayerContainer.value?.classList.add('fullscreen');
+            if (videoPlayerContainer.value?.webkitRequestFullscreen) videoPlayerContainer.value?.webkitRequestFullscreen();
+            else if(videoPlayerContainer.value?.requestFullscreen) videoPlayerContainer.value?.requestFullscreen();
+            else if (videoPlayerContainer.value?.mozRequestFullScreen) videoPlayerContainer.value?.mozRequestFullScreen(); // Careful to the capital S
+            else if (videoPlayerContainer.value?.msRequestFullscreen) videoPlayerContainer.value?.msRequestFullscreen();
+            else if (videoPlayerContainer.value?.webkitEnterFullscreen) videoPlayerContainer.value?.webkitEnterFullscreen(); // Magic is here for iOS
+
+        }else{
+                if(document.exitFullscreen) document.exitFullscreen();
+                else if (videoPlayerContainer.value?.webkitCancelFullscreen) videoPlayerContainer.value?.webkitCancelFullscreen();
+                else if (videoPlayerContainer.value?.mozCancelFullScreen) videoPlayerContainer.value?.mozCancelFullScreen(); // Careful 
+                else if (videoPlayerContainer.value?.msExitFullscreen) videoPlayerContainer.value?.msExitFullscreen();
+                exitFullscreen();
+        }
+    }
+
+    function exitFullscreen(){
+        videoPlayerContainer.value?.classList.remove('fullscreen');
+        videoContainer.value?.classList.remove('fullscreen');
+        fullscreenState = false;
+    }
+
 </script>
 
 
@@ -135,7 +164,7 @@
                             </div>
                             <div class="right-controls">
                                 <button class="control-element sub"><img src="../assets/control-icons/subtitles.svg"></button>
-                                <button class="control-element fullscreen-btn"><img src="../assets/control-icons/fullscreen.svg"></button>
+                                <button class="control-element fullscreen-btn" @click="toggleFullscreen"><img src="../assets/control-icons/fullscreen.svg"></button>
                             </div>
                         </div>
                     </div>
