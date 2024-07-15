@@ -6,10 +6,8 @@
 
     const route = useRoute();
     // load all information about the selected entry
-    const data = ref({} as Detail);
-    fetch('http://localhost:8000/detail/' + route.params.entryID).then(res => res.json()).then(detail => data.value = detail).then(() => {
-        console.log(data.value);
-    });
+    const data = ref({"detail": {}} as Detail);
+    fetch('http://localhost:8000/detail/' + route.params.entryID).then(res => res.json()).then(detail => data.value = detail);
 
 </script>
 
