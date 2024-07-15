@@ -9,7 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
     { path: "/", component: LibraryView },
-    { path: "/detail/:entryID", component: DetailView }
+    { path: "/detail/:entryID/:type", component: DetailView }
 ]
 
 const router = createRouter({
