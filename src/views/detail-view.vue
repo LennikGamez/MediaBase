@@ -3,6 +3,7 @@
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
     import { DetailMovie, DetailShow } from '../types';
+    import episodeComponent from '../components/episode-component.vue';
 
     var data: any;
     const route = useRoute();
@@ -13,11 +14,10 @@
             data = ref<DetailMovie | null>(null)
             break;
         case "1":
-            data = ref<DetailMovie | null>(null)
+            data = ref<DetailShow | null>(null)
             break;
 
     }
-    // const data = ref<DetailShow | DetailMovie | null>(null)
     fetch('http://localhost:8000/detail/' + route.params.entryID).then(res => res.json()).then(detail => data.value = detail);
 
 </script>
@@ -31,8 +31,11 @@
             <p id="description">{{ data?.detail.description }}</p>
             <div id="buttons">
                 <button id="play-btn" class="btn focusable" tabindex="0">Play</button>
-                <div id="seasons" v-if="data?.detail.type == 1">
-                    <h3 v-for="(item, index) in data?.seasons" :key="index">{{ item }}</h3>
+                <div v-if="data?.detail.type == 1" id="seasons">
+                    <div class="season" v-for="(item, index) in data.seasons" :key="index">
+                        <h4 class="season-index">{{ index }}</h4>
+                        <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,8 +54,49 @@
         }
     }
 
+    #details{
+        width: 100%;
+        height: 100%;
+
+        width: 95%;
+        grid-column-start: 2;
+        text-align: center;
+        max-height: 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
     .player{
         width: 100%;
         height: 100%;
+    }
+    
+    #seasons{
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .season{
+        width: 75%;
+
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .season-index{
+        align-self: start;
+    }
+
+    #play-btn{
+        background-color: white;
+        color: black;
+
+        width: 75%;
     }
 </style>
