@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+    import { useRouter } from 'vue-router';
     import { Media } from '../types';
     import { ref } from 'vue';
 
+    const router = useRouter();
     const props = defineProps({
         data: {
             type: Object as () => Media,
@@ -11,10 +13,17 @@
 
     const posterLink = ref("http://localhost:8000/poster/" + props.data.entryID);
 
+    const wrapper = ref(HTMLDivElement)
+
+    function rerouteToDetails(){
+        console.log("reroute to details of " + props.data.name);
+        router.push({path: '/detail/' + props.data.entryID})
+    }
+
 </script>
 
 <template>
-    <div class="media">
+    <div class="media" ref="wrapper" @click="rerouteToDetails">
         <img :src="posterLink">
         <h4 class="title">{{ props.data.name }}</h4>
     </div>
