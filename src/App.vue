@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import { provide } from 'vue';
+  import { provide, ref } from 'vue';
 
-  provide('preferredWatchLanguage', 'Deutsch');
+  const language = ref('Deutsch');
+  provide('preferredWatchLanguage', language);
 </script>
 
 <template>
