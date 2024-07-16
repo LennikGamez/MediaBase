@@ -238,24 +238,21 @@
     }
 
     function changeLanguage(lang: String){
-        console.log("change language", lang);
-        
         if (!videoElement.value) return;
+        const playing = !videoElement.value?.paused;
+        
         const currentTime = videoElement.value.currentTime;
         videoElement.value.pause();
         updateLanguageBasedOnPreferredLanguage();
+        
         videoElement.value.load();
         videoElement.value.currentTime = currentTime;
-        // videoElement.value.play();
+        
+        if (playing) videoElement.value.play();
+        console.log("change language", lang);
     }
 
     defineExpose({play});
-
-    const languagePopover = ref();
-    function toggleLanguageSelect(){      
-        languagePopover.value?.toggleVisibility();
-    }
-
 </script>
 
 
@@ -281,9 +278,9 @@
                                 </div>
                             </div>
                             <div class="right-controls">
-                                <button class="control-element lang-btn popoverInvoker" @click="toggleLanguageSelect">
+                                <button class="control-element lang-btn popoverInvoker">
                                     <img src="../assets/control-icons/language.svg">
-                                    <LanguagePop id="language-select" :availableLangs="availableLanguages" ref="languagePopover" @changeLanguage="changeLanguage"/> 
+                                    <LanguagePop class="popover" id="language-select" :availableLangs="availableLanguages" @changeLanguage="changeLanguage"/> 
                                 </button>
                                 <button class="control-element sub"><img src="../assets/control-icons/subtitles.svg"></button>
                                 <button class="control-element fullscreen-btn" @click="toggleFullscreen">
@@ -305,6 +302,14 @@
 
             .popoverInvoker{
                 position: relative;
+            }
+
+            .popoverInvoker:focus-within > .popover{
+                display: block;
+            }
+
+            .popover{
+                display: none;
             }
 
             .video-player{
