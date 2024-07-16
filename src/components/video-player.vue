@@ -92,7 +92,13 @@
 
     function formatTime(time: number){
         if (isNaN(time)) return formatTime(0);
-        return new Date(time * 1000).toISOString().substr(14, 5);
+        const date = new Date(time * 1000);
+        const hours = date.getUTCHours();
+        const minutes = date.getUTCMinutes();
+        const seconds = date.getUTCSeconds();
+        
+        if (hours === 0) return `${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}`
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
     }
 
     function hideCursor(){
