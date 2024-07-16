@@ -1,12 +1,19 @@
 <script setup lang="ts">
     import { inject, Ref, ref } from 'vue';
+    import LanguagePop from './popover/language-popover.vue';
     import { useRoute } from 'vue-router';
     import InactivityTimer from '../inactivity-timer';
 
     var timelineDrag = false;
     var fullscreenState = false;
 
+    let currentEntryID: number | null = null;
+    let currentEpisodeID: number | null = null;
+    let currentType: number | null = null;
+    let currentLanguages: string[] = [];
+
     const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
+    const availableLanguages = ref <string[]>([]);
 
     const route = useRoute();
    
@@ -209,15 +216,45 @@
     // the languages parameter is used to select the preferred language if available if not it defaults to the first language of the video
     function play(type: number, entryID: number, episodeID: number | null, languages: string[]){
         if (!videoElement.value) return;
-
-        videoSrc.value = getVideoSrc(type, entryID, episodeID, languages);
-        console.log(videoSrc.value);
+        
+        currentEntryID = entryID;
+        currentEpisodeID = episodeID;
+        currentType = type;
+        currentLanguages = languages;
+        availableLanguages.value = languages;
+        
+        updateLanguageBasedOnPreferredLanguage();
+        startVideo();
+    }
+    function startVideo(){
+        if (!videoElement.value) return;
         videoElement.value.load();
         videoElement.value.play();
+    }
+    function updateLanguageBasedOnPreferredLanguage(){
+        if (!currentType || !currentEntryID || !currentEpisodeID) return;
+        videoSrc.value = getVideoSrc(currentType, currentEntryID, currentEpisodeID, availableLanguages.value);
+        
+    }
+
+    function changeLanguage(lang: String){
+        console.log("change language", lang);
+        
+        if (!videoElement.value) return;
+        const currentTime = videoElement.value.currentTime;
+        videoElement.value.pause();
+        updateLanguageBasedOnPreferredLanguage();
+        videoElement.value.load();
+        videoElement.value.currentTime = currentTime;
+        // videoElement.value.play();
     }
 
     defineExpose({play});
 
+    const languagePopover = ref();
+    function toggleLanguageSelect(){      
+        languagePopover.value?.toggleVisibility();
+    }
 
 </script>
 
@@ -244,6 +281,10 @@
                                 </div>
                             </div>
                             <div class="right-controls">
+                                <button class="control-element lang-btn popoverInvoker" @click="toggleLanguageSelect">
+                                    <img src="../assets/control-icons/language.svg">
+                                    <LanguagePop id="language-select" :availableLangs="availableLanguages" ref="languagePopover" @changeLanguage="changeLanguage"/> 
+                                </button>
                                 <button class="control-element sub"><img src="../assets/control-icons/subtitles.svg"></button>
                                 <button class="control-element fullscreen-btn" @click="toggleFullscreen">
                                     <img src="../assets/control-icons/fullscreen.svg" id="fullscreen-icon">
@@ -261,6 +302,11 @@
 </template>
 
 <style lang="css" scoped>
+
+            .popoverInvoker{
+                position: relative;
+            }
+
             .video-player{
                 --hover-fade-time: .3s;
                 --timeline-size: 2px;
@@ -373,7 +419,7 @@
                 color: white;
                 padding: 0px;        
             }
-            .control-element:hover{
+            .control-element:hover > img{
                 cursor: pointer;
                 opacity: .5;
             }
