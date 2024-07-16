@@ -200,7 +200,7 @@
      * @param episodeID 
      * @param languages 
      */
-    function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{
+    function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{        
         switch (type){
             case 0: // movie
                 return `http://localhost:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
@@ -223,7 +223,7 @@
         currentLanguages = languages;
         availableLanguages.value = languages;
         
-        updateLanguageBasedOnPreferredLanguage();
+        updateLanguageBasedOnPreferredLanguage();                
         startVideo();
     }
     function startVideo(){
@@ -231,8 +231,8 @@
         videoElement.value.load();
         videoElement.value.play();
     }
-    function updateLanguageBasedOnPreferredLanguage(){
-        if (!currentType || !currentEntryID || !currentEpisodeID) return;
+    function updateLanguageBasedOnPreferredLanguage(){        
+        if (currentType === null || currentEntryID === null) return;
         videoSrc.value = getVideoSrc(currentType, currentEntryID, currentEpisodeID, availableLanguages.value);
         
     }
