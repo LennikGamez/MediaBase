@@ -1,10 +1,12 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { inject, Ref, ref } from 'vue';
     import { useRoute } from 'vue-router';
     import InactivityTimer from '../inactivity-timer';
 
     var timelineDrag = false;
     var fullscreenState = false;
+
+    const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
 
     const route = useRoute();
    
@@ -15,7 +17,7 @@
     const currentTimeSpan = ref<HTMLSpanElement | null>(null);
     const durationSpan = ref<HTMLSpanElement | null>(null);
     const timeline = ref<HTMLDivElement | null>(null);
-    const videoSrc = ref('http://localhost:8000/stream/show/2/episode/2/Deutsch'); 
+    const videoSrc = ref(''); 
 
     const inactivityTimer = new InactivityTimer(()=>hideCursor(), ()=>showCursor(), 2000);
 
@@ -174,6 +176,48 @@
         if(document.fullscreenElement) return;
         exitFullscreen();
     }
+
+    /**
+     * returns either the preferred language if available or the first language of the list
+     * @param langs 
+     */
+    function selectPreferredOrAvailableLanguage(langs: string[]){
+        if (langs.includes(preferredWatchLanguage.value)) return preferredWatchLanguage.value;
+        return langs[0];
+    }
+
+    /**
+     * generates the video src
+     * @param type 
+     * @param entryID 
+     * @param episodeID 
+     * @param languages 
+     */
+    function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{
+        switch (type){
+            case 0: // movie
+                return `http://localhost:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
+            case 1:
+                return `http://localhost:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
+            
+            default:
+                return ''; 
+        }
+    }
+
+    // generates the video src for given type, entryID, episodeID and languages and reloads the player and starts the video
+    // the languages parameter is used to select the preferred language if available if not it defaults to the first language of the video
+    function play(type: number, entryID: number, episodeID: number | null, languages: string[]){
+        if (!videoElement.value) return;
+
+        videoSrc.value = getVideoSrc(type, entryID, episodeID, languages);
+        console.log(videoSrc.value);
+        videoElement.value.load();
+        videoElement.value.play();
+    }
+
+    defineExpose({play});
+
 
 </script>
 
