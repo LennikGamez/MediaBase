@@ -2,34 +2,30 @@
 import { inject, Ref, ref } from 'vue';
 
 
-const availableLanguages = defineProps({
+const props = defineProps({
     availableLangs: Array<String>
 });
-
+const emit = defineEmits(['changeLanguage']);
 
 const popover = ref<HTMLDivElement | null>(null);
-const option = ref<HTMLDivElement[]>([]);
 const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
 
-function toggleVisibility(){    
-    if (!popover.value) return;
-    popover.value.classList.toggle('hidden');
-}
 
-function changeLanguage(lang: String){    
+
+function changeLanguage(lang: String, button: HTMLButtonElement){    
     if (!popover.value) return;
     popover.value.classList.add('hidden');
     preferredWatchLanguage.value = lang;
     emit('changeLanguage', lang);
+    button.blur();
 }
-const emit = defineEmits(['changeLanguage']);
-defineExpose({toggleVisibility});
+
 </script>
 
 <template>
-    <div class="language-popover hidden" ref="popover">
-        <div v-if="availableLangs?.length == 0" class="option">No languages available</div>
-        <div class="option" v-for="(item, index) in availableLangs" :key="index" @click="changeLanguage(item)">{{ item }}</div>
+    <div class="language-popover" ref="popover">
+        <div v-if="props.availableLangs?.length == 0" class="option">No languages available</div>
+        <button class="option" v-for="(item, index) in props.availableLangs" :key="index" @click="changeLanguage(item, $event.target as HTMLButtonElement)">{{ item }}</button>
     </div>
 </template>
 
@@ -46,20 +42,23 @@ defineExpose({toggleVisibility});
         border-radius: 8px;
         padding: 0;
         background-color: hsl(0, 0%, 90%);
-        color: black;    
-    }
-
-    .hidden{
-        display: none;
     }
 
     .option{
+        color: black;    
         border-radius: 8px;
         padding-block: 8px;
         padding-inline: 16px;
+        background-color: transparent;
+        outline: none;
+        border: none;
         &:hover{
             background-color: hsl(0, 0%, 80%);
             cursor: pointer;
         }
+    }
+
+    .option:not(:last-child){
+        border-bottom: 1px solid hsl(0, 0%, 80%);
     }
 </style>
