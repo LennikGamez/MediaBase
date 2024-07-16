@@ -63,7 +63,7 @@
     function onMainPlayButton(){
         if (!data.value) return;
         switch (type) {
-            case "0":   // movie
+            case "0":   // movie                
                 play(data.value.detail.entryID, null);
                 break;
             case "1":   // show
