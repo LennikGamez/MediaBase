@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { provide, ref } from 'vue';
 
-  const language = ref('Deutsch');
+  const language = ref('Englisch');
   provide('preferredWatchLanguage', language);
 </script>
 
