@@ -3,6 +3,7 @@
     import LanguagePop from './popover/language-popover.vue';
     import { useRoute } from 'vue-router';
     import InactivityTimer from '../inactivity-timer';
+    import LoaderComponent from './loader-component.vue';
 
     var timelineDrag = false;
     var fullscreenState = false;
@@ -26,6 +27,8 @@
     const videoSrc = ref(''); 
     const posterSrc = ref('');
     const poster = ref<HTMLImageElement | null>(null);
+
+    const loader = ref<InstanceType<typeof LoaderComponent> | null>(null);
 
     const inactivityTimer = new InactivityTimer(()=>hideCursor(), ()=>showCursor(), 2000);
 
@@ -100,6 +103,19 @@
         
         if (hours === 0) return `${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}`
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    }
+
+    function showLoader(){
+        if (!loader.value) return;
+        if (!videoSrc.value) return;
+        
+        loader.value.show();
+    }
+    function hideLoader(){
+        if (!loader.value) return;
+        if (!videoSrc.value) return;
+
+        loader.value.hide();
     }
 
     function hideCursor(){
@@ -270,7 +286,8 @@
 
 <template>
     <div class="video-player" ref="videoPlayerContainer">
-                <img :src="posterSrc" ref="poster">
+                <LoaderComponent ref="loader"/>
+                <img :src="posterSrc" ref="poster" />
                 <div class="video-container paused" ref="videoContainer">
                     <div class="video-controls-container">
                         <div class="timeline-container" ref="timeline" @touchstart="startSeeking" @mousedown="startSeeking">
@@ -304,7 +321,7 @@
                         </div>
                     </div>
 
-                    <video playsinline ref="videoElement" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline">
+                    <video playsinline ref="videoElement" @loadstart="showLoader" @loadeddata="hideLoader" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline" @waiting=showLoader @playing=hideLoader>
                         <source id="source" :src="videoSrc">
                     </video>
                 </div>
