@@ -76,6 +76,13 @@
         }
     }
 
+    function onEpisodeStart(id: number){
+        console.log("herhg");
+        
+        if (!data.value) return;
+        play(data.value.detail.entryID, id);
+    }
+
 </script>
 
 <template>
@@ -90,7 +97,7 @@
                 <div v-if="data?.detail.type == 1" id="seasons">
                     <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
                         <h4 class="season-index">{{ index }}</h4>
-                        <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" />
+                        <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" :episodeID="episode.episodeID" @startEpisode="onEpisodeStart" />
                     </div>
                 </div>
             </div>
