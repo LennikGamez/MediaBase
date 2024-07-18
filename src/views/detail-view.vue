@@ -76,9 +76,7 @@
         }
     }
 
-    function onEpisodeStart(id: number){
-        console.log("herhg");
-        
+    function onEpisodeStart(id: number){      
         if (!data.value) return;
         play(data.value.detail.entryID, id);
     }

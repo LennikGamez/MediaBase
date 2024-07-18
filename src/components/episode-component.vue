@@ -7,7 +7,6 @@
     const emit = defineEmits(['startEpisode']);
 
     function startEpisode(){
-        console.log("start episode");
         emit('startEpisode', props.episodeID);
     }
 
