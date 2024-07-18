@@ -298,12 +298,12 @@
                         <div class="controls">
                             <div class="left-controls">
                                 <button class="control-element play-btn" @click="togglePlayPause">
-                                    <svg class="play-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M320-200v-560l440 280-440 280Zm80-280Zm0 134 210-134-210-134v268Z"/></svg>
-                                    <svg class="pause-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"/></svg>
+                                    <img class="play-icon" src="../assets/control-icons/play.svg">
+                                    <img class="pause-icon" src="../assets/control-icons/pause.svg">
                                 </button>
                                 <div class="time-display">
                                     <span class="current-time" ref="currentTimeSpan">0:00</span>
-                                    /
+                                    <span>/</span>
                                     <span class="total-time" ref="durationSpan">0:00</span>
                                 </div>
                             </div>
