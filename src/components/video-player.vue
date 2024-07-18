@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { inject, Ref, ref } from 'vue';
+    import { inject, onMounted, Ref, ref } from 'vue';
     import LanguagePop from './popover/language-popover.vue';
     import { useRoute } from 'vue-router';
     import InactivityTimer from '../inactivity-timer';
@@ -10,7 +10,6 @@
     let currentEntryID: number | null = null;
     let currentEpisodeID: number | null = null;
     let currentType: number | null = null;
-    let currentLanguages: string[] = [];
 
     const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
     const availableLanguages = ref <string[]>([]);
@@ -25,6 +24,8 @@
     const durationSpan = ref<HTMLSpanElement | null>(null);
     const timeline = ref<HTMLDivElement | null>(null);
     const videoSrc = ref(''); 
+    const posterSrc = ref('');
+    const poster = ref<HTMLImageElement | null>(null);
 
     const inactivityTimer = new InactivityTimer(()=>hideCursor(), ()=>showCursor(), 2000);
 
@@ -226,11 +227,12 @@
         currentEntryID = entryID;
         currentEpisodeID = episodeID;
         currentType = type;
-        currentLanguages = languages;
         availableLanguages.value = languages;
         
         updateLanguageBasedOnPreferredLanguage();                
         startVideo();
+
+        poster.value?.classList.add('hidden');
     }
     function startVideo(){
         if (!videoElement.value) return;
@@ -259,11 +261,16 @@
     }
 
     defineExpose({play});
+
+    onMounted(() => {
+        posterSrc.value = `http://localhost:8000/poster/${route.params.entryID}`;
+    })
 </script>
 
 
 <template>
     <div class="video-player" ref="videoPlayerContainer">
+                <img :src="posterSrc" ref="poster">
                 <div class="video-container paused" ref="videoContainer">
                     <div class="video-controls-container">
                         <div class="timeline-container" ref="timeline" @touchstart="startSeeking" @mousedown="startSeeking">
@@ -306,6 +313,12 @@
 
 <style lang="css" scoped>
 
+            .hidden{
+                display: none;
+            }
+            img:not(.hidden) ~ .video-container{
+                display: none;
+            }
             .popoverInvoker{
                 position: relative;
             }
