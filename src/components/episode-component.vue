@@ -1,13 +1,20 @@
 <script setup lang="ts">
     const props = defineProps({
+        episodeID: Number,
         name: String,
         description: String
-    })
+    });
+    const emit = defineEmits(['startEpisode']);
+
+    function startEpisode(){
+        console.log("start episode");
+        emit('startEpisode', props.episodeID);
+    }
 
 </script>
 
 <template>
-    <div id="wrapper">
+    <div id="wrapper" @click="startEpisode">
         <span id="name">{{ props.name }}</span>
         <span id="description">{{ props.description }}</span>
     </div>
