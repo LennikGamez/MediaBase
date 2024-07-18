@@ -112,7 +112,6 @@
 
     #details{
         width: 100%;
-        height: 100%;
 
         width: 95%;
         grid-column-start: 2;
@@ -120,6 +119,11 @@
         max-height: 100%;
         overflow-y: scroll;
         overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    #details::-webkit-scrollbar{
+        display: none;
     }
 
     .player{
