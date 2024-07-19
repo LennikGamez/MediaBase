@@ -19,7 +19,7 @@
             break;
 
     }
-    fetch('http://localhost:8000/detail/' + route.params.entryID).then(res => res.json()).then(detail => data.value = detail)
+    fetch('http://localhost:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
     
 
     /**
@@ -51,7 +51,7 @@
      */
     async function play(entryID: number, episodeID: number | null) {
         if (!videoPlayer.value) return;
-        videoPlayer.value.play(parseInt(type), entryID, episodeID, await getAvailableLanguages(entryID, episodeID));
+        videoPlayer.value.play(parseInt(type), entryID, episodeID, data.value?.detail.movieID, await getAvailableLanguages(entryID, episodeID));
     }
 
     /**
@@ -85,7 +85,7 @@
 
 <template>
     <div id="wrapper">
-        <VideoPlayer ref="videoPlayer"/>
+        <VideoPlayer ref="videoPlayer" />
         <div id="details">
             <h1 id="title">{{ data?.detail.name }}</h1>
             <p id="duration">1:30h</p>
