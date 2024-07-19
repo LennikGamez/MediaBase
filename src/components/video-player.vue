@@ -4,12 +4,15 @@
     import { useRoute } from 'vue-router';
     import InactivityTimer from '../inactivity-timer';
     import LoaderComponent from './loader-component.vue';
+    import SubtitleComponent from './subtitle-component.vue';
+    import SubtitleManager from '../helper/subtitle-manager';
 
     var timelineDrag = false;
     var fullscreenState = false;
 
     let currentEntryID: number | null = null;
     let currentEpisodeID: number | null = null;
+    let currentMovieID: number | null = null;
     let currentType: number | null = null;
 
     const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
@@ -27,6 +30,7 @@
     const videoSrc = ref(''); 
     const posterSrc = ref('');
     const poster = ref<HTMLImageElement | null>(null);
+    const subTitleData = ref<Array<{[key: string]: string}>>([]);
 
     const loader = ref<InstanceType<typeof LoaderComponent> | null>(null);
 
@@ -237,13 +241,16 @@
 
     // generates the video src for given type, entryID, episodeID and languages and reloads the player and starts the video
     // the languages parameter is used to select the preferred language if available if not it defaults to the first language of the video
-    function play(type: number, entryID: number, episodeID: number | null, languages: string[]){
+    function play(type: number, entryID: number, episodeID: number | null, movieID: number | null, languages: string[]){
         if (!videoElement.value) return;
         
         currentEntryID = entryID;
         currentEpisodeID = episodeID;
+        currentMovieID = movieID;
         currentType = type;
         availableLanguages.value = languages;
+
+        SubtitleManager.loadBasedOnTypeAndID(route.params.type[0], currentMovieID, currentEpisodeID)?.then(data => subTitleData.value = data);
         
         updateLanguageBasedOnPreferredLanguage();                
         startVideo();
@@ -277,6 +284,7 @@
     }
 
     defineExpose({play});
+
 
     onMounted(() => {
         posterSrc.value = `http://localhost:8000/poster/${route.params.entryID}`;
@@ -323,6 +331,7 @@
 
                     <video playsinline ref="videoElement" @loadstart="showLoader" @loadeddata="hideLoader" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline" @waiting=showLoader @playing=hideLoader>
                         <source id="source" :src="videoSrc">
+                        <SubtitleComponent :subID="parseInt(item.subID)" v-for="(item, index) in subTitleData" :key="index"/>
                     </video>
                 </div>
             </div>
