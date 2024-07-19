@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { inject, onMounted, Ref, ref } from 'vue';
     import LanguagePop from './popover/language-popover.vue';
+    import SubtitlePop from './popover/subtitle-popover.vue';
     import { useRoute } from 'vue-router';
     import InactivityTimer from '../inactivity-timer';
     import LoaderComponent from './loader-component.vue';
@@ -283,6 +284,18 @@
         console.log("change language", lang);
     }
 
+    function setSubtitle(lang: String){                
+        if (!videoElement.value) return;
+        const textTracks = videoElement.value.textTracks;
+        for (let i=0; i<textTracks.length; i++){
+            if (textTracks[i].language === lang){
+                textTracks[i].mode = "showing";
+            }else{
+                textTracks[i].mode = "hidden";
+            }
+        }
+    }
+
     defineExpose({play});
 
 
@@ -320,7 +333,10 @@
                                     <img src="../assets/control-icons/language.svg">
                                     <LanguagePop class="popover" id="language-select" :availableLangs="availableLanguages" @changeLanguage="changeLanguage"/> 
                                 </button>
-                                <button class="control-element sub"><img src="../assets/control-icons/subtitles.svg"></button>
+                                <button class="control-element sub popoverInvoker">
+                                    <img src="../assets/control-icons/subtitles.svg">
+                                    <SubtitlePop class="popover" id="subtitles-select" :languages="['Deutsch', 'Englisch']" @setSubtitle="setSubtitle"/>
+                                </button>
                                 <button class="control-element fullscreen-btn" @click="toggleFullscreen">
                                     <img src="../assets/control-icons/fullscreen.svg" id="fullscreen-icon">
                                     <img src="../assets/control-icons/fullscreen-exit.svg" id="fullscreen-exit-icon">
