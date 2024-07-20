@@ -105,21 +105,45 @@
 
 <style scoped>
     #wrapper{
-        @media only screen and (min-width: 1100px) {
+        height: 100%;
+    }
+    /* HUGE  */
+    @media only screen and (min-width: 1100px){
+        #wrapper{
             display: grid;
-            height: 100%;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr;
             place-items: center;
             column-gap: 10px;
         }
+
+        #details{
+            width: 95%;
+            grid-column-start: 2;
+            text-align: center;
+            max-height: 100%;  
+        }
+    }
+
+    /* SMOL */
+    @media not screen and (min-width: 1100px){
+        #wrapper{
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+            place-items: center;
+            column-gap: 10px;
+       }
+
+       #details{
+            width: 100%;
+            margin-top: 20px;
+            display: grid;
+            place-self: start;
+       }
     }
 
     #details{
-        width: 100%;
-
-        width: 95%;
-        grid-column-start: 2;
         text-align: center;
         max-height: 100%;
         overflow-y: scroll;
