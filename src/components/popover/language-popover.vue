@@ -25,7 +25,7 @@ function changeLanguage(lang: String, button: HTMLButtonElement){
 <template>
     <div class="language-popover" ref="popover">
         <div v-if="props.availableLangs?.length == 0" class="option">No languages available</div>
-        <button class="option" v-for="(item, index) in props.availableLangs" :key="index" @click="changeLanguage(item, $event.target as HTMLButtonElement)">{{ item }}</button>
+        <button class="option" v-for="(item, index) in props.availableLangs" :key="index" @click="changeLanguage(item, $event.target as HTMLButtonElement)" tabindex="0">{{ item }}</button>
     </div>
 </template>
 

@@ -329,15 +329,15 @@
                                 </div>
                             </div>
                             <div class="right-controls">
-                                <button class="control-element lang-btn popoverInvoker">
+                                <button class="control-element lang-btn popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/language.svg">
                                     <LanguagePop class="popover" id="language-select" :availableLangs="availableLanguages" @changeLanguage="changeLanguage"/> 
                                 </button>
-                                <button class="control-element sub popoverInvoker">
+                                <button class="control-element sub popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/subtitles.svg">
                                     <SubtitlePop class="popover" id="subtitles-select" :languages="['Deutsch', 'Englisch']" @setSubtitle="setSubtitle"/>
                                 </button>
-                                <button class="control-element fullscreen-btn" @click="toggleFullscreen">
+                                <button class="control-element fullscreen-btn" @click="toggleFullscreen" tabindex="0">
                                     <img src="../assets/control-icons/fullscreen.svg" id="fullscreen-icon">
                                     <img src="../assets/control-icons/fullscreen-exit.svg" id="fullscreen-exit-icon">
                                 </button>
@@ -537,6 +537,10 @@
                 max-width: 100%;
                 width: 100%;
                 object-fit: contain;
+            }
+            video::cue{
+                padding: 100px;
+                background-color: orange;
             }
             .video-container.fullscreen video{
                 height: 100%;

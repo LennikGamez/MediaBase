@@ -15,7 +15,7 @@
 
 <template>
     <div class="subtitle-popover">
-        <button class="option" v-if="props.languages" v-for="(item, index) in props.languages" :key="index" @click="setSubtitle(item,  ($event.target as HTMLButtonElement))">
+        <button class="option" v-if="props.languages" v-for="(item, index) in props.languages" :key="index" @click="setSubtitle(item,  ($event.target as HTMLButtonElement))" tabindex="0">
             {{ item }} [SUB]
         </button>
     </div>
