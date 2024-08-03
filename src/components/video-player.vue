@@ -166,7 +166,9 @@
         if (!videoContainer.value) return;
         videoContainer.value.classList.remove("paused");         
         
-        setSubtitleLine(-1);
+        if (videoContainer.value.classList.contains('cursor-none')){
+            setSubtitleLine(-1);
+        }
 
     }
     function onPause(){
@@ -569,8 +571,7 @@
                 object-fit: contain;
             }
             video::cue{
-                padding: 100px;
-                background-color: orange;
+                /* font-size: 1rem; */
             }
             .video-container.fullscreen video{
                 height: 100%;
