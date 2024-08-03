@@ -27,7 +27,7 @@
 
 
 <template>
-    <track default kind="subtitles" :src="blobSrc" :srclang="subLang">
+    <track kind="subtitles" :src="blobSrc" :srclang="subLang">
 </template>
 
 
