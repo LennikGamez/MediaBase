@@ -39,6 +39,8 @@
 
     const videoStepSize = 5;
 
+    const subtitleShift = -4;
+
     // events
 
     document.addEventListener('webkitfullscreenchange', ()=>{handleFullscreenChange()});
@@ -125,10 +127,14 @@
 
     function hideCursor(){
         videoContainer.value?.classList.add('cursor-none');
+
+        setSubtitleLine(-1);
     }
 
     function showCursor(){
         videoContainer.value?.classList.remove('cursor-none');
+
+        setSubtitleLine(subtitleShift);
     }
 
     function getActiveSubtitleTrack(){
@@ -167,7 +173,7 @@
         if (!videoContainer.value) return;
         videoContainer.value.classList.add("paused");
 
-        setSubtitleLine(-5);
+        setSubtitleLine(subtitleShift);
     }
 
     // timeline
