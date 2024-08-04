@@ -39,6 +39,8 @@
 
     const videoStepSize = 5;
 
+    const subtitleShift = -4;
+
     // events
 
     document.addEventListener('webkitfullscreenchange', ()=>{handleFullscreenChange()});
@@ -125,10 +127,33 @@
 
     function hideCursor(){
         videoContainer.value?.classList.add('cursor-none');
+
+        setSubtitleLine(-1);
     }
 
     function showCursor(){
         videoContainer.value?.classList.remove('cursor-none');
+
+        setSubtitleLine(subtitleShift);
+    }
+
+    function getActiveSubtitleTrack(){
+        if (!videoElement.value) return;
+        return Array.from(videoElement.value.textTracks).find((track) => track.mode === 'showing');
+    }
+
+    function setSubtitleLine(line: number){
+        if (!videoElement.value) return;
+        const activeTrack = getActiveSubtitleTrack() as TextTrack;
+        if (!activeTrack) return;
+        
+        const cues = activeTrack.cues ?? [];
+        for (let i=0; i<cues.length; i++){
+            
+            (cues[i] as VTTCue).line = line;
+        }
+        activeTrack.mode = 'disabled';
+        activeTrack.mode = 'showing';
     }
 
     // play pause
@@ -139,11 +164,18 @@
     }
     function onPlay(){
         if (!videoContainer.value) return;
-        videoContainer.value.classList.remove("paused");
+        videoContainer.value.classList.remove("paused");         
+        
+        if (videoContainer.value.classList.contains('cursor-none')){
+            setSubtitleLine(-1);
+        }
+
     }
     function onPause(){
         if (!videoContainer.value) return;
         videoContainer.value.classList.add("paused");
+
+        setSubtitleLine(subtitleShift);
     }
 
     // timeline
@@ -231,9 +263,9 @@
     function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{        
         switch (type){
             case 0: // movie
-                return `http://localhost:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return `http://192.168.178.83:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
             case 1:
-                return `http://localhost:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return `http://192.168.178.83:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
             
             default:
                 return ''; 
@@ -300,7 +332,7 @@
 
 
     onMounted(() => {
-        posterSrc.value = `http://localhost:8000/poster/${route.params.entryID}`;
+        posterSrc.value = `http://192.168.178.83:8000/poster/${route.params.entryID}`;
     })
 </script>
 
@@ -539,8 +571,7 @@
                 object-fit: contain;
             }
             video::cue{
-                padding: 100px;
-                background-color: orange;
+                /* font-size: 1rem; */
             }
             .video-container.fullscreen video{
                 height: 100%;
