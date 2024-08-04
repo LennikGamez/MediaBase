@@ -263,9 +263,9 @@
     function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{        
         switch (type){
             case 0: // movie
-                return `http://192.168.178.83:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return `http://localhost:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
             case 1:
-                return `http://192.168.178.83:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return `http://localhost:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
             
             default:
                 return ''; 
@@ -332,7 +332,7 @@
 
 
     onMounted(() => {
-        posterSrc.value = `http://192.168.178.83:8000/poster/${route.params.entryID}`;
+        posterSrc.value = `http://localhost:8000/poster/${route.params.entryID}`;
     })
 </script>
 
@@ -367,7 +367,7 @@
                                 </button>
                                 <button class="control-element sub popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/subtitles.svg">
-                                    <SubtitlePop class="popover" id="subtitles-select" :languages="['Deutsch', 'Englisch']" @setSubtitle="setSubtitle"/>
+                                    <SubtitlePop class="popover" id="subtitles-select" :languages="subTitleData.map(item => item.language)" @setSubtitle="setSubtitle"/>
                                 </button>
                                 <button class="control-element fullscreen-btn" @click="toggleFullscreen" tabindex="0">
                                     <img src="../assets/control-icons/fullscreen.svg" id="fullscreen-icon">
