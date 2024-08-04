@@ -276,7 +276,7 @@
     // the languages parameter is used to select the preferred language if available if not it defaults to the first language of the video
     function play(type: number, entryID: number, episodeID: number | null, movieID: number | null, languages: string[]){
         if (!videoElement.value) return;
-        
+        videoElement.value.scrollIntoView();
         currentEntryID = entryID;
         currentEpisodeID = episodeID;
         currentMovieID = movieID;
