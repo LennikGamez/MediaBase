@@ -169,11 +169,6 @@
     #details::-webkit-scrollbar{
         display: none;
     }
-
-    .player{
-        width: 100%;
-        height: 100%;
-    }
     
     #seasons{
         width: 100%;
