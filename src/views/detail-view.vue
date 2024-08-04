@@ -51,7 +51,13 @@
      */
     async function play(entryID: number, episodeID: number | null) {
         if (!videoPlayer.value) return;
-        videoPlayer.value.play(parseInt(type), entryID, episodeID, data.value?.detail.movieID, await getAvailableLanguages(entryID, episodeID));
+        videoPlayer.value.play(
+            parseInt(type),
+             entryID,
+              episodeID,
+               data.value?.detail.movieID,
+                await getAvailableLanguages(entryID, episodeID)
+            );
     }
 
     /**
