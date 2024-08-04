@@ -23,3 +23,7 @@ body, #app {
   height: 100%;
 }
 
+#app{
+  overflow-y: scroll;
+}
+
