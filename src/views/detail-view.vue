@@ -94,7 +94,7 @@
         <VideoPlayer ref="videoPlayer" />
         <div id="details">
             <h1 id="title">{{ data?.detail.name }}</h1>
-            <p id="duration">1:30h</p>
+            <!-- <p id="duration">1:30h</p> -->
             <p id="description">{{ data?.detail.description }}</p>
             <div id="buttons">
                 <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
@@ -143,19 +143,28 @@
 
        #details{
             width: 100%;
-            margin-top: 20px;
+            padding-top: 20px;
             display: grid;
             place-self: start;
        }
     }
 
+    #title{
+        margin: 5px;
+        margin-top: 15px;
+        font-weight: 1000;
+        font-size: 2.5rem;
+    }
+
+    #description{
+        font-size: 1.8rem;
+        font-weight: 100;
+        color: lightgray;
+    }
+
     #details{
         text-align: center;
         max-height: 100%;
-        overflow-y: scroll;
-        overflow-x: hidden;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
     }
     #details::-webkit-scrollbar{
         display: none;
@@ -192,6 +201,12 @@
         background-color: white;
         color: black;
 
-        width: 75%;
+        width: 200px;
+        border-style: none;
+        border-radius: 5px;
+        height: 30px;
+
+        font-size: 18px;
+        font-weight: 900;
     }
 </style>
