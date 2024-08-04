@@ -15,6 +15,7 @@
 
 <template>
     <div class="subtitle-popover">
+        <button class="option" tabindex="0" @click="setSubtitle('None',  ($event.target as HTMLButtonElement))">None</button>
         <button class="option" v-if="props.languages" v-for="(item, index) in props.languages" :key="index" @click="setSubtitle(item,  ($event.target as HTMLButtonElement))" tabindex="0">
             {{ item }} [SUB]
         </button>
@@ -30,11 +31,14 @@
         bottom: 100%;
         right: 0;
         width: fit-content;
-        height: fit-content;
+        height: max-content;
 
         border-radius: 8px;
         padding: 0;
         background-color: hsl(0, 0%, 90%);
+        display: flex;
+        flex-direction: column;
+        gap: 100px;
     }
 
     .option{
@@ -45,10 +49,11 @@
         background-color: transparent;
         outline: none;
         border: none;
-        &:hover{
-            background-color: hsl(0, 0%, 80%);
-            cursor: pointer;
-        }
+        width: 100%;
+    }
+    .option:hover{
+        background-color: hsl(0, 0%, 80%);
+        cursor: pointer;
     }
 
     .option:not(:last-child){
