@@ -93,16 +93,16 @@
     <div id="wrapper">
         <VideoPlayer ref="videoPlayer" />
         <div id="details">
-            <h1 id="title">{{ data?.detail.name }}</h1>
-            <!-- <p id="duration">1:30h</p> -->
-            <p id="description">{{ data?.detail.description }}</p>
-            <div id="buttons">
-                <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
-                <div v-if="data?.detail.type == 1" id="seasons">
-                    <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
-                        <h4 class="season-index">{{ index }}</h4>
-                        <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" :episodeID="episode.episodeID" @startEpisode="onEpisodeStart" />
-                    </div>
+            <div id="header">
+                <h1 id="title">{{ data?.detail.name }}</h1>
+                <!-- <p id="duration">1:30h</p> -->
+                <p id="description">{{ data?.detail.description }}</p>
+            </div>
+            <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
+            <div v-if="data?.detail.type == 1" id="seasons">
+                <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
+                    <h4 class="season-index">{{ index }}</h4>
+                    <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" :episodeID="episode.episodeID" @startEpisode="onEpisodeStart" />
                 </div>
             </div>
         </div>
@@ -110,24 +110,19 @@
 </template>
 
 <style scoped>
-    #wrapper{
-        height: 100%;
-    }
     /* HUGE  */
     @media only screen and (min-width: 1100px){
         #wrapper{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr;
-            place-items: center;
-            column-gap: 10px;
+            display: flex;
+            max-height: 100%;
+            align-items: center;
+            gap: 12px;
         }
 
         #details{
             width: 95%;
-            grid-column-start: 2;
             text-align: center;
-            max-height: 100%;  
+            align-self: flex-start;
         }
     }
 
