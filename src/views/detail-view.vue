@@ -91,7 +91,7 @@
 
 <template>
     <div id="wrapper">
-        <VideoPlayer ref="videoPlayer" />
+        <VideoPlayer ref="videoPlayer" id="video"/>
         <div id="details">
             <div id="header">
                 <h1 id="title">{{ data?.detail.name }}</h1>
@@ -114,15 +114,24 @@
     @media only screen and (min-width: 1100px){
         #wrapper{
             display: flex;
-            max-height: 100%;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
+            height: 100%;
         }
 
         #details{
-            width: 95%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            align-self: flex-start;
+            flex: 1;
+            max-height: 100%;
+        }
+
+        #video{
+            flex: 1;
         }
     }
 
@@ -140,7 +149,7 @@
             width: 100%;
             padding-top: 20px;
             display: grid;
-            place-self: start;
+            place-items: center;
        }
     }
 
@@ -159,10 +168,13 @@
 
     #details{
         text-align: center;
-        max-height: 100%;
     }
-    #details::-webkit-scrollbar{
-        display: none;
+    #seasons::-webkit-scrollbar{
+        width: 5px;
+    }
+    #seasons::-webkit-scrollbar-thumb{
+        background-color: white;
+        border-radius: 5px;
     }
     
     #seasons{
@@ -172,6 +184,9 @@
         flex-direction: column;
         gap: 8px;
         align-items: center;
+        overflow-y: scroll;
+
+        margin-top: 8px;
     }
 
     .season{
