@@ -129,6 +129,11 @@
             text-align: center;
             max-height: 100%;  
         }
+
+        #seasons{
+            overflow-y: scroll;
+            height: 100%;
+        }
     }
 
     /* SMOL */
