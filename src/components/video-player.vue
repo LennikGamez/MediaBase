@@ -77,6 +77,7 @@
         switch (event.key){
             case ' ':
             case 'k':
+            case 'Enter':
                 togglePlayPause();
                 break;
             case 'f': 
@@ -350,10 +351,10 @@
                         </div>
                         <div class="controls">
                             <div class="left-controls">
-                                <button class="control-element play-btn" @click="togglePlayPause">
+                                <div class="control-element play-btn" @click="togglePlayPause" tabindex="0">
                                     <img class="play-icon" src="../assets/control-icons/play.svg">
                                     <img class="pause-icon" src="../assets/control-icons/pause.svg">
-                                </button>
+                                </div>
                                 <div class="time-display">
                                     <span class="current-time" ref="currentTimeSpan">0:00</span>
                                     <span>/</span>
@@ -361,18 +362,18 @@
                                 </div>
                             </div>
                             <div class="right-controls">
-                                <button class="control-element lang-btn popoverInvoker" tabindex="0">
+                                <div class="control-element lang-btn popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/language.svg">
                                     <LanguagePop class="popover" id="language-select" :availableLangs="availableLanguages" @changeLanguage="changeLanguage"/> 
-                                </button>
-                                <button class="control-element sub popoverInvoker" tabindex="0">
+                                </div>
+                                <div class="control-element sub popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/subtitles.svg">
                                     <SubtitlePop class="popover" id="subtitles-select" :languages="subTitleData.map(item => item.language)" @setSubtitle="setSubtitle"/>
-                                </button>
-                                <button class="control-element fullscreen-btn" @click="toggleFullscreen" tabindex="0">
+                                </div>
+                                <div class="control-element fullscreen-btn" @click="toggleFullscreen" tabindex="0">
                                     <img src="../assets/control-icons/fullscreen.svg" id="fullscreen-icon">
                                     <img src="../assets/control-icons/fullscreen-exit.svg" id="fullscreen-exit-icon">
-                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -499,7 +500,7 @@
             }
 
             .left-controls,
-            right-controls{
+            .right-controls{
                 display: flex;
                 gap: 5px;
                 align-items: center;
@@ -515,7 +516,9 @@
                 border-style: none;
                 outline: none;
                 color: white;
-                padding: 0px;        
+                padding: 0px; 
+                align-items: center;
+                display: flex;
             }
             .control-element:hover > img{
                 cursor: pointer;

@@ -91,18 +91,18 @@
 
 <template>
     <div id="wrapper">
-        <VideoPlayer ref="videoPlayer" />
+        <VideoPlayer ref="videoPlayer" id="video"/>
         <div id="details">
-            <h1 id="title">{{ data?.detail.name }}</h1>
-            <!-- <p id="duration">1:30h</p> -->
-            <p id="description">{{ data?.detail.description }}</p>
-            <div id="buttons">
-                <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
-                <div v-if="data?.detail.type == 1" id="seasons">
-                    <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
-                        <h4 class="season-index">{{ index }}</h4>
-                        <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" :episodeID="episode.episodeID" @startEpisode="onEpisodeStart" />
-                    </div>
+            <div id="header">
+                <h1 id="title">{{ data?.detail.name }}</h1>
+                <!-- <p id="duration">1:30h</p> -->
+                <p id="description">{{ data?.detail.description }}</p>
+            </div>
+            <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
+            <div v-if="data?.detail.type == 1" id="seasons">
+                <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
+                    <h4 class="season-index">{{ index }}</h4>
+                    <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" :episodeID="episode.episodeID" @startEpisode="onEpisodeStart" />
                 </div>
             </div>
         </div>
@@ -110,24 +110,28 @@
 </template>
 
 <style scoped>
-    #wrapper{
-        height: 100%;
-    }
     /* HUGE  */
     @media only screen and (min-width: 1100px){
         #wrapper{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr;
-            place-items: center;
-            column-gap: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            height: 100%;
         }
 
         #details{
-            width: 95%;
-            grid-column-start: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            max-height: 100%;  
+            flex: 1;
+            max-height: 100%;
+        }
+
+        #video{
+            flex: 1;
         }
 
         #seasons{
@@ -150,7 +154,7 @@
             width: 100%;
             padding-top: 20px;
             display: grid;
-            place-self: start;
+            place-items: center;
        }
     }
 
@@ -169,10 +173,13 @@
 
     #details{
         text-align: center;
-        max-height: 100%;
     }
-    #details::-webkit-scrollbar{
-        display: none;
+    #seasons::-webkit-scrollbar{
+        width: 5px;
+    }
+    #seasons::-webkit-scrollbar-thumb{
+        background-color: white;
+        border-radius: 5px;
     }
     
     #seasons{
@@ -182,6 +189,9 @@
         flex-direction: column;
         gap: 8px;
         align-items: center;
+        overflow-y: scroll;
+
+        margin-top: 8px;
     }
 
     .season{
