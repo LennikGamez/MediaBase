@@ -22,8 +22,12 @@
         await audioElement.value.play();
     }
 
-    function loadChapter(id: string){
+    async function loadChapter(id: string){
         currentAudioID.value = id
+
+        await audioElement.value?.pause();
+        await audioElement.value?.load();
+        await audioElement.value?.play();
     }
 
     function fetchData(){
