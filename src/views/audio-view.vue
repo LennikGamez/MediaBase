@@ -4,7 +4,7 @@
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
     
-    const audioSrcBase = ref('http://localhost:8000/stream-audio/');
+    const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
     const currentAudioID = ref('');
     const audioElement = ref<HTMLAudioElement | null>(null);
     const route = useRoute();
@@ -31,7 +31,7 @@
     }
 
     function fetchData(){
-        fetch('http://localhost:8000/detail/' + route.params.entryID + "/2").then(res => res.json())
+        fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/2").then(res => res.json())
         .then(d => data.value = d) // set data
         .then(() => currentAudioID.value = data.value.audio[0].audioID.toString()); // set first chapter
     }

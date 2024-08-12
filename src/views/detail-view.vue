@@ -19,7 +19,7 @@
             break;
 
     }
-    fetch('http://localhost:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
+    fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
     
 
     /**
@@ -31,10 +31,10 @@
         let res;
         switch (type) {
             case "0":
-                res = await fetch(`http://localhost:8000/available-languages/${entryID}`);
+                res = await fetch(`http://192.168.178.120:8000/available-languages/${entryID}`);
                 break;
             case "1":
-                res = await fetch(`http://localhost:8000/available-languages/${entryID}/${episodeID}`)
+                res = await fetch(`http://192.168.178.120:8000/available-languages/${entryID}/${episodeID}`)
                 break;
                 
         }

@@ -7,7 +7,7 @@
     const media = ref(Array<Media>());
 
     function fetchMedia(){
-        fetch('http://localhost:8000/media').then(res => res.json()).then(data => media.value = data)
+        fetch('http://192.168.178.120:8000/media').then(res => res.json()).then(data => media.value = data)
     }
 
     fetchMedia();
