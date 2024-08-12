@@ -77,5 +77,6 @@
 
     #album-art{
         width: 300px;
+        border-radius: 16px;
     }
 </style>
