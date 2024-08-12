@@ -4,13 +4,14 @@
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
     
-    const audioSrc = ref('http://localhost:8000/stream-audio/2');
+    const audioSrcBase = ref('http://localhost:8000/stream-audio/');
+    const currentAudioID = ref('2');
     const route = useRoute();
 
-    const data: Ref<DetailAudio> = ref({} as DetailAudio);
+    const data: Ref<DetailAudio> = ref({detail: {}, audio: Array()} as DetailAudio);
 
     function fetchData(){
-        fetch('http://localhost:8000/detail/+' + route.params.entryID + "/2").then(res => res.json())
+        fetch('http://localhost:8000/detail/' + route.params.entryID + "/2").then(res => res.json())
         .then(d => data.value = d)
     }
 
@@ -24,7 +25,7 @@
             id="album-art"
             :src="data.detail.posterPath" />
         <h1>{{  data.detail.name }}</h1>
-        <audio :src="audioSrc" controls></audio>
+        <audio :src="audioSrcBase + currentAudioID" controls></audio>
 
     </div>
 
