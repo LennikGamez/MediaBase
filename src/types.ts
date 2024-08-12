@@ -45,7 +45,7 @@ export type DetailMovie = MovieDetail & {
 export type DetailAudio = Detail & {
     audio: [
         {
-            id: number,
+            audioID: number,
             name: string,
             number: number
         }

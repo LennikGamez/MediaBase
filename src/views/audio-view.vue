@@ -10,11 +10,14 @@
 
     const data: Ref<DetailAudio> = ref({detail: {}, audio: Array()} as DetailAudio);
 
+    function onChapterStart(id: string){
+        currentAudioID.value = id
+    }
     function fetchData(){
         fetch('http://localhost:8000/detail/' + route.params.entryID + "/2").then(res => res.json())
         .then(d => data.value = d)
     }
-
+    
     fetchData();
 </script>
 
@@ -33,8 +36,8 @@
         <chapterComponent v-for="(item, index) in (data as DetailAudio).audio" :key="index"
             :num = "item.number"
             :name = "item.name"
-            :id = "item.id"
-
+            :id = "item.audioID"
+            @startChapter="onChapterStart"
         />
     </div>
 </template>
