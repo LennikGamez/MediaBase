@@ -41,3 +41,13 @@ export type DetailMovie = MovieDetail & {
         episodeID: number | null
     }
 }
+
+export type DetailAudio = Detail & {
+    audio: [
+        {
+            id: number,
+            name: string,
+            number: number
+        }
+    ]
+}
