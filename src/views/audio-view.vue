@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import { ref } from 'vue';
+    import { ref, Ref } from 'vue';
     import { useRoute } from 'vue-router';
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
@@ -7,7 +7,7 @@
     const audioSrc = ref('http://localhost:8000/stream-audio/2');
     const route = useRoute();
 
-    const data = ref({});
+    const data: Ref<DetailAudio> = ref({} as DetailAudio);
 
     function fetchData(){
         fetch('http://localhost:8000/detail/+' + route.params.entryID + "/2").then(res => res.json())
@@ -22,8 +22,8 @@
     <div class="wrapper">
         <img
             id="album-art"
-            src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/d1/26/ba/d126ba99-37dd-cd18-3582-617ad8c21ca5/9783844919127.jpg/600x600bb.jpg" />
-        <h1>Die Känguru Apokryphen</h1>
+            :src="data.detail.posterPath" />
+        <h1>{{  data.detail.name }}</h1>
         <audio :src="audioSrc" controls></audio>
 
     </div>
