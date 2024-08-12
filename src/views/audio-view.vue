@@ -6,11 +6,23 @@
     
     const audioSrcBase = ref('http://localhost:8000/stream-audio/');
     const currentAudioID = ref('2');
+    const audioElement = ref<HTMLAudioElement | null>(null);
     const route = useRoute();
 
     const data: Ref<DetailAudio> = ref({detail: {}, audio: Array()} as DetailAudio);
 
-    function onChapterStart(id: string){
+    async function playNextChapter(){
+        if(!audioElement.value) return
+        if(parseInt(currentAudioID.value) == (data.value as DetailAudio).audio[data.value.audio.length - 1].audioID){
+            return
+        }
+        currentAudioID.value = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) + 1].audioID.toString();;
+
+        await audioElement.value.load();
+        await audioElement.value.play();
+    }
+
+    function loadChapter(id: string){
         currentAudioID.value = id
     }
     function fetchData(){
@@ -28,7 +40,10 @@
             id="album-art"
             :src="data.detail.posterPath" />
         <h1>{{  data.detail.name }}</h1>
-        <audio :src="audioSrcBase + currentAudioID" controls></audio>
+        <audio :src="audioSrcBase + currentAudioID" controls
+            @ended="playNextChapter"
+            ref="audioElement"
+        ></audio>
 
     </div>
 
@@ -37,7 +52,7 @@
             :num = "item.number"
             :name = "item.name"
             :id = "item.audioID"
-            @startChapter="onChapterStart"
+            @startChapter="loadChapter"
         />
     </div>
 </template>
