@@ -17,7 +17,16 @@
 
     function rerouteToDetails(){
         console.log("reroute to details of " + props.data.name);
-        router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type})
+        switch (props.data.type) {
+            case 0:
+            case 1:
+                router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type});
+                break;
+            case 2:
+                router.push({path: "/audio/" + props.data.entryID});
+                break;
+
+        }
     }
 
 </script>
