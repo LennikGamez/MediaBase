@@ -264,9 +264,9 @@
     function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{        
         switch (type){
             case 0: // movie
-                return `http://localhost:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return `http://192.168.178.120:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
             case 1:
-                return `http://localhost:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return `http://192.168.178.120:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
             
             default:
                 return ''; 
@@ -333,7 +333,7 @@
 
 
     onMounted(() => {
-        posterSrc.value = `http://localhost:8000/poster/${route.params.entryID}`;
+        posterSrc.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`;
     })
 </script>
 

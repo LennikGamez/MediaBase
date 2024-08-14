@@ -4,7 +4,7 @@
         subID: Number
     })
 
-    const src = 'http://localhost:8000/subtitle/' + props.subID;
+    const src = 'http://192.168.178.120:8000/subtitle/' + props.subID;
 
     const blobSrc = ref('');
     const subLang = ref('');

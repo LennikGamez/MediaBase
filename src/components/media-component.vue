@@ -11,7 +11,7 @@
         }
     });
 
-    const posterLink = ref("http://localhost:8000/poster/" + props.data.entryID);
+    const posterLink = ref("http://192.168.178.120:8000/poster/" + props.data.entryID);
 
     const wrapper = ref(HTMLDivElement)
 

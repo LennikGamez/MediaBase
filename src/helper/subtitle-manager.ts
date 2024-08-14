@@ -1,13 +1,13 @@
 export default class SubtitleManager{
 
     public static async getSubtitlesForMovie(movieID: number){
-        const resp = await fetch("http://localhost:8000/subtitles-movie/"+movieID);
+        const resp = await fetch("http://192.168.178.120:8000/subtitles-movie/"+movieID);
         const data = await resp.json();
         return data; 
     }
 
     public static async getSubtitlesForEpisode(episodeID: number){
-        const resp = await fetch("http://localhost:8000/subtitles-episode/"+episodeID);
+        const resp = await fetch("http://192.168.178.120:8000/subtitles-episode/"+episodeID);
         const data = await resp.json();
         return data; 
     }
