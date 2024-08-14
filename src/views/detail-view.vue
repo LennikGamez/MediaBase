@@ -94,7 +94,8 @@
         <VideoPlayer ref="videoPlayer" id="video"/>
         <div id="details">
             <div id="header">
-                <h1 id="title">{{ data?.detail.name }}</h1>
+                <h1 id="title" v-if="data?.detail.name == 'Barbie'" style="color: pink;">{{ data?.detail.name }}</h1>
+                <h1 id="title" v-if="data?.detail.name != 'Barbie'">{{ data?.detail.name }}</h1>
                 <!-- <p id="duration">1:30h</p> -->
                 <p id="description">{{ data?.detail.description }}</p>
             </div>
