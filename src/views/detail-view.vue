@@ -10,15 +10,7 @@
     const type = route.params.type as string;
     const videoPlayer = ref<typeof VideoPlayer | null>(null);
     // load all information about the selected entry
-    switch (type) {
-        case "0":
-            data = ref<DetailMovie | null>(null)
-            break;
-        case "1":
-            data = ref<DetailShow | null>(null)
-            break;
 
-    }
     fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
     
 
@@ -55,7 +47,7 @@
             parseInt(type),
              entryID,
               episodeID,
-               data.value?.detail.movieID,
+               (data.value as DetailMovie).movieID,
                 await getAvailableLanguages(entryID, episodeID)
             );
     }
