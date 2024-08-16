@@ -159,13 +159,13 @@
         margin: 5px;
         margin-top: 15px;
         font-weight: 1000;
-        font-size: 2.5rem;
+        font-size: clamp(2.5rem, 2.5vw, 100vw);
     }
 
     #description{
-        font-size: 1.8rem;
-        font-weight: 100;
-        color: lightgray;
+        font-size: clamp(1.5rem, 1.5vw, 100vw);
+        font-weight: 400;
+        color: hsl(0, 0%, 78%);
     }
 
     #details{
@@ -208,12 +208,12 @@
         background-color: white;
         color: black;
 
-        width: 200px;
+        width: clamp(200px, 10vw, 100vw);
         border-style: none;
         border-radius: 5px;
-        height: 30px;
+        padding: 5px;
 
-        font-size: 18px;
+        font-size: clamp(18px, 1.5vw, 100vw);
         font-weight: 900;
     }
 </style>
