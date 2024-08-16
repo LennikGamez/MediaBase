@@ -55,7 +55,7 @@
             videoElement.value?.play();
             setTimelineByMouseEvent(e);
         });
-    document.addEventListener('touchend', (e)=>{
+    document.addEventListener('touchend', ()=>{
         inactivityTimer.restart();
         if(!timelineDrag) return;
         timelineDrag = false;
@@ -408,7 +408,7 @@
 
             .video-player{
                 --hover-fade-time: .3s;
-                --timeline-size: 2px;
+                --timeline-size: clamp(4px, .5vw, .5vw);
                 --video-control-inset: 8px;
                 --timeline-drag-buffer: 32px;
                 display: flex;
@@ -508,6 +508,7 @@
             .time-display{
                 display: flex;
                 align-items: center;
+                font-size: clamp(1rem, 1vw, 1vw);
             }
 
 
@@ -519,6 +520,7 @@
                 padding: 0px; 
                 align-items: center;
                 display: flex;
+                width: clamp(24px, 1.5vw, 1.5vw);
             }
             .control-element:hover > img{
                 cursor: pointer;
@@ -558,7 +560,7 @@
                 bottom: 50%;
                 transform: translateY(50%) translateX(-50%);
                 left: calc(var(--progress) * 100%);
-                width: 12px;
+                width: calc(var(--timeline-size) + .3rem);
                 aspect-ratio: 1;
 
             }
