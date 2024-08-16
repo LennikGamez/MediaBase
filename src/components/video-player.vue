@@ -408,7 +408,7 @@
 
             .video-player{
                 --hover-fade-time: .3s;
-                --timeline-size: clamp(4px, .5vw, .5vw);
+                --timeline-size: clamp(4px, .2vw, .2vw);
                 --video-control-inset: 8px;
                 --timeline-drag-buffer: 32px;
                 display: flex;
@@ -560,7 +560,7 @@
                 bottom: 50%;
                 transform: translateY(50%) translateX(-50%);
                 left: calc(var(--progress) * 100%);
-                width: calc(var(--timeline-size) + .3rem);
+                width: calc(var(--timeline-size) + .4rem);
                 aspect-ratio: 1;
 
             }
