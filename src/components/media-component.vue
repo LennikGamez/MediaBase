@@ -11,13 +11,22 @@
         }
     });
 
-    const posterLink = ref("http://localhost:8000/poster/" + props.data.entryID);
+    const posterLink = ref("http://192.168.178.120:8000/poster/" + props.data.entryID);
 
     const wrapper = ref(HTMLDivElement)
 
     function rerouteToDetails(){
         console.log("reroute to details of " + props.data.name);
-        router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type})
+        switch (props.data.type) {
+            case 0:
+            case 1:
+                router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type});
+                break;
+            case 2:
+                router.push({path: "/audio/" + props.data.entryID});
+                break;
+
+        }
     }
 
 </script>

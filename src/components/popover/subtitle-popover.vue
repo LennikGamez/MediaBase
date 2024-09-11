@@ -50,6 +50,8 @@
         outline: none;
         border: none;
         width: 100%;
+        font-size: clamp(12px, 1vw, 1vw);
+
     }
     .option:hover{
         background-color: hsl(0, 0%, 80%);

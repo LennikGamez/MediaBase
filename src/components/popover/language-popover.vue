@@ -52,11 +52,14 @@ function changeLanguage(lang: String, button: HTMLButtonElement){
         background-color: transparent;
         outline: none;
         border: none;
-        &:hover{
+
+        font-size: clamp(12px, 1vw, 1vw);
+    }
+
+    .option:hover{
             background-color: hsl(0, 0%, 80%);
             cursor: pointer;
         }
-    }
 
     .option:not(:last-child){
         border-bottom: 1px solid hsl(0, 0%, 80%);

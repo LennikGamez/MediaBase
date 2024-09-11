@@ -16,7 +16,9 @@ export type Detail = {
 }
 
 export type MovieDetail = Detail & {
-    movieID: number
+    detail: {
+        movieID: number
+    }
 }
 
 export type Episode = {
@@ -40,4 +42,14 @@ export type DetailMovie = MovieDetail & {
         movieID: number,
         episodeID: number | null
     }
+}
+
+export type DetailAudio = Detail & {
+    audio: [
+        {
+            audioID: number,
+            name: string,
+            number: number
+        }
+    ]
 }

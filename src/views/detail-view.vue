@@ -10,16 +10,8 @@
     const type = route.params.type as string;
     const videoPlayer = ref<typeof VideoPlayer | null>(null);
     // load all information about the selected entry
-    switch (type) {
-        case "0":
-            data = ref<DetailMovie | null>(null)
-            break;
-        case "1":
-            data = ref<DetailShow | null>(null)
-            break;
 
-    }
-    fetch('http://localhost:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
+    fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
     
 
     /**
@@ -31,10 +23,10 @@
         let res;
         switch (type) {
             case "0":
-                res = await fetch(`http://localhost:8000/available-languages/${entryID}`);
+                res = await fetch(`http://192.168.178.120:8000/available-languages/${entryID}`);
                 break;
             case "1":
-                res = await fetch(`http://localhost:8000/available-languages/${entryID}/${episodeID}`)
+                res = await fetch(`http://192.168.178.120:8000/available-languages/${entryID}/${episodeID}`)
                 break;
                 
         }
@@ -55,7 +47,7 @@
             parseInt(type),
              entryID,
               episodeID,
-               data.value?.detail.movieID,
+               (data.value as DetailMovie).detail.movieID,
                 await getAvailableLanguages(entryID, episodeID)
             );
     }
@@ -69,7 +61,7 @@
     function onMainPlayButton(){
         if (!data.value) return;
         switch (type) {
-            case "0":   // movie                
+            case "0":   // movie  
                 play(data.value.detail.entryID, null);
                 break;
             case "1":   // show
@@ -94,7 +86,7 @@
         <VideoPlayer ref="videoPlayer" id="video"/>
         <div id="details">
             <div id="header">
-                <h1 id="title">{{ data?.detail.name }}</h1>
+                <h1 id="title" :class="data?.detail.name">{{ data?.detail.name }}</h1>
                 <!-- <p id="duration">1:30h</p> -->
                 <p id="description">{{ data?.detail.description }}</p>
             </div>
@@ -110,6 +102,11 @@
 </template>
 
 <style scoped>
+
+    /* TITLE CLASSES */
+    .Barbie{
+        color: hsl(326, 79%, 55%);
+    }
     /* HUGE  */
     @media only screen and (min-width: 1100px){
         #wrapper{
@@ -162,13 +159,13 @@
         margin: 5px;
         margin-top: 15px;
         font-weight: 1000;
-        font-size: 2.5rem;
+        font-size: clamp(2.5rem, 2.5vw, 100vw);
     }
 
     #description{
-        font-size: 1.8rem;
-        font-weight: 100;
-        color: lightgray;
+        font-size: clamp(1.5rem, 1.5vw, 100vw);
+        font-weight: 400;
+        color: hsl(0, 0%, 78%);
     }
 
     #details{
@@ -211,12 +208,12 @@
         background-color: white;
         color: black;
 
-        width: 200px;
+        width: clamp(200px, 10vw, 100vw);
         border-style: none;
         border-radius: 5px;
-        height: 30px;
+        padding: 5px;
 
-        font-size: 18px;
+        font-size: clamp(18px, 1.5vw, 100vw);
         font-weight: 900;
     }
 </style>
