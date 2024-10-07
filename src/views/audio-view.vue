@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-    import { ref, Ref } from 'vue';
+    import { onMounted, ref, Ref } from 'vue';
     import { useRoute } from 'vue-router';
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
     
+    const posterPath = ref('');
     const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
     const currentAudioID = ref('');
     const audioElement = ref<HTMLAudioElement | null>(null);
@@ -37,6 +38,10 @@
     }
     
     fetchData();
+
+    onMounted(() =>{
+        posterPath.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`
+    })
 </script>
 
 
@@ -44,7 +49,7 @@
     <div class="wrapper">
         <img
             id="album-art"
-            :src="data.detail.posterPath" />
+            :src="posterPath" />
         <h1>{{  data.detail.name }}</h1>
         <audio :src="audioSrcBase + currentAudioID" controls
             @ended="playNextChapter"
