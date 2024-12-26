@@ -16,6 +16,8 @@
     let currentMovieID: number | null = null;
     let currentType: number | null = null;
 
+    const emit = defineEmits(['endVideo']);
+
     const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
     const availableLanguages = ref <string[]>([]);
 
@@ -329,6 +331,21 @@
         }
     }
 
+    function onVideoEnd(){
+        if (!videoElement.value) return;
+        if (videoElement.value.currentTime === videoElement.value.duration) {
+            videoElement.value.currentTime = 0;
+            switch (currentType){
+                case 0:
+                    emit('endVideo', {type: currentType, id: currentMovieID});
+                    break;
+                case 1:
+                    emit('endVideo', {type: currentType, id: currentEpisodeID});
+                    break
+            }
+        }
+    }
+
     defineExpose({play});
 
 
@@ -378,7 +395,7 @@
                         </div>
                     </div>
 
-                    <video playsinline ref="videoElement" @loadstart="showLoader" @loadeddata="hideLoader" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline" @waiting=showLoader @playing=hideLoader>
+                    <video playsinline ref="videoElement" @loadstart="showLoader" @loadeddata="hideLoader" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline" @waiting=showLoader @playing=hideLoader @ended="onVideoEnd">
                         <source id="source" :src="videoSrc">
                         <SubtitleComponent :subID="parseInt(item.subID)" v-for="(item, index) in subTitleData" :key="index"/>
                     </video>

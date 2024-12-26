@@ -77,11 +77,34 @@
         play(data.value.detail.entryID, id);
     }
 
+    function onVideoEnd(event: Event & {type: number, id: number}){
+        if (!videoPlayer.value) return;
+        if (event.type == 0) return;    // movie ended
+        // episode ended
+        playNextEpisode(event.id);
+    }
+
+    function playNextEpisode(currentEpisodeID: number){
+        if (!data.value) return;
+        for (const season in (data.value as DetailShow).seasons){
+            const episodes = (data.value as DetailShow).seasons[season];
+            for (const episode of episodes){
+                if (episode.episodeID == currentEpisodeID){
+                    const nextEpisode = episodes[episodes.indexOf(episode) + 1];
+                    if (nextEpisode){
+                        play(data.value.detail.entryID, nextEpisode.episodeID);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
 </script>
 
 <template>
     <div id="wrapper">
-        <VideoPlayer ref="videoPlayer" id="video"/>
+        <VideoPlayer ref="videoPlayer" id="video" @endVideo="onVideoEnd"/>
         <div id="details">
             <div id="header">
                 <h1 id="title" :class="data?.detail.name">{{ data?.detail.name }}</h1>
