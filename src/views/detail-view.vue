@@ -41,7 +41,7 @@
      * @param entryID 
      * @param episodeID 
      */
-    async function play(entryID: number, episodeID: number | null) {
+    async function play(entryID: number, episodeID: number | null) {       
         if (!videoPlayer.value) return;
         videoPlayer.value.play(
             parseInt(type),
@@ -66,10 +66,8 @@
                 break;
             case "1":   // show
                 const showData = data.value as DetailShow
-                
                 const seasons = Object.values(showData.seasons)
-                const firstSeason = seasons[0][0].episodeID
-                play(data.value.detail.entryID, showData.seasons[firstSeason][0].episodeID);
+                play(data.value.detail.entryID, seasons[0][0].episodeID);
                 break;
         }
     }
@@ -90,6 +88,7 @@
                 <!-- <p id="duration">1:30h</p> -->
                 <p id="description">{{ data?.detail.description }}</p>
             </div>
+            <div></div>
             <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
             <div v-if="data?.detail.type == 1" id="seasons">
                 <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
