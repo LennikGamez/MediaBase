@@ -16,7 +16,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_to, _from, savedPosition) {
     // If saved position exists, restore it
     if (savedPosition) {
       return new Promise((resolve) => {
