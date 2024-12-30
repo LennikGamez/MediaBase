@@ -564,22 +564,21 @@
                 position: absolute;
                 height: var(--timeline-size);
                 left: 0;
-                right: calc(100% - var(--progress) * 100%);
-                background-color: red;
+                right: 0;
+                background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,74,1) 35%, rgba(0,212,255,1) 100%);
                 z-index: 101;
+                clip-path: polygon(0% 0%, calc(var(--progress) * 100%) 0%, calc(var(--progress) * 100%) 100%, 0% 100%); /* Clip the background */
             }
 
             .thumb-indicator{
                 display: none;
-                background-color: red;
+                background-color: rgb(209, 201, 211);
                 border-radius: 50%;
                 position: absolute;
-                bottom: 50%;
-                transform: translateY(50%) translateX(-50%);
+                transform: translateY(-25%);
                 left: calc(var(--progress) * 100%);
-                width: calc(var(--timeline-size) + .4rem);
+                width: calc(var(--timeline-size) * 2);
                 aspect-ratio: 1;
-
             }
 
             .timeline-container:hover .thumb-indicator{
