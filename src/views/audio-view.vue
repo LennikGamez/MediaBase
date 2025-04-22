@@ -34,6 +34,9 @@
     async function loadChapter(id: string){
         currentAudioID.value = id
         setMetaData(getTrackName(parseInt(currentAudioID.value)), "Marc Dieter", data.value.detail.name, [
+            {
+                src: posterPath.value
+            }
         ])
 
         if (!audioElement.value) return;
