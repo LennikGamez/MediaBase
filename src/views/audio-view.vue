@@ -72,6 +72,7 @@
         //
         posterPath.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`
     })
+
 </script>
 
 
@@ -83,8 +84,10 @@
         <h1>{{  data.detail.name }}</h1>
         <audio :src="audioSrcBase + currentAudioID" controls
             @ended="playNextChapter"
+            @timeupdate="startSilence"
             ref="audioElement"
         ></audio>
+        <audio muted src="/silent.mp3" loop autoplay></audio>
 
     </div>
 
