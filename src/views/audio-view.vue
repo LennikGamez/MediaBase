@@ -3,6 +3,7 @@
     import { useRoute } from 'vue-router';
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
+    import { registerActionHandler, setMetaData } from '../helper/mediasession-manager';
     
     const posterPath = ref('');
     const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
@@ -17,29 +18,58 @@
         if(parseInt(currentAudioID.value) == (data.value as DetailAudio).audio[data.value.audio.length - 1].audioID){
             return
         }
-        currentAudioID.value = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) + 1].audioID.toString();;
+        let nextID = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) + 1].audioID.toString();;
+        loadChapter(nextID);
 
-        await audioElement.value.load();
-        await audioElement.value.play();
+    }
+
+    async function playPreviousChapter(){
+        if (!audioElement.value) return;
+        if (parseInt(currentAudioID.value) == (data.value as DetailAudio).audio[0].audioID) return;
+
+        let previousID = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) - 1].audioID.toString();
+        loadChapter(previousID);
     }
 
     async function loadChapter(id: string){
+        if (!audioElement.value) return;
         currentAudioID.value = id
+        
+        // awaits are important to wait for the audio to load before playing it
+        await audioElement.value.pause();
+        await audioElement.value.load();
+        await audioElement.value.play();
 
-        await audioElement.value?.pause();
-        await audioElement.value?.load();
-        await audioElement.value?.play();
+        setMetaData(getTrackName(parseInt(currentAudioID.value)), "Marc Dieter", data.value.detail.name, []);
+    }
+
+    function getTrackName(id: number): string{
+        if (!data.value) return "";
+        const audioObject = data.value.audio.find(i => i.audioID == id);
+        if (audioObject == undefined) return "";
+        return audioObject.name;
     }
 
     function fetchData(){
         fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/2").then(res => res.json())
         .then(d => data.value = d) // set data
-        .then(() => currentAudioID.value = data.value.audio[0].audioID.toString()); // set first chapter
+        .then(() => loadChapter(data.value.audio[0].audioID.toString())); // set first chapter
     }
     
     fetchData();
 
     onMounted(() =>{
+        // setup the MediaSession handlers
+            registerActionHandler("nexttrack", playNextChapter);
+            registerActionHandler("play", () => audioElement.value?.play())
+            registerActionHandler("pause", ()=> audioElement.value?.pause())
+            registerActionHandler("previoustrack", playPreviousChapter)
+            registerActionHandler("seekto", (details)=> {
+                if (!audioElement.value) return;
+                if (!details.seekTime) return;
+                 audioElement.value.currentTime = details.seekTime}
+                )
+        //
         posterPath.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`
     })
 </script>
