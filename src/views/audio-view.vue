@@ -32,15 +32,15 @@
     }
 
     async function loadChapter(id: string){
-        if (!audioElement.value) return;
         currentAudioID.value = id
-        
+        setMetaData(getTrackName(parseInt(currentAudioID.value)), "Marc Dieter", data.value.detail.name, [
+        ])
+
+        if (!audioElement.value) return;
         // awaits are important to wait for the audio to load before playing it
         await audioElement.value.pause();
         await audioElement.value.load();
-        await audioElement.value.play();
-
-        setMetaData(getTrackName(parseInt(currentAudioID.value)), "Marc Dieter", data.value.detail.name, []);
+        await audioElement.value.play();;
     }
 
     function getTrackName(id: number): string{
@@ -56,9 +56,9 @@
         .then(() => loadChapter(data.value.audio[0].audioID.toString())); // set first chapter
     }
     
-    fetchData();
 
     onMounted(() =>{
+        fetchData();
         // setup the MediaSession handlers
             registerActionHandler("nexttrack", playNextChapter);
             registerActionHandler("play", () => audioElement.value?.play())
@@ -71,6 +71,7 @@
                 )
         //
         posterPath.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`
+
     })
 
 </script>
