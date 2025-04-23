@@ -90,9 +90,9 @@
         <h1>{{  data.detail.name }}</h1>
         <audio :src="audioSrcBase + currentAudioID" controls
             @ended="playNextChapter"
-            @timeupdate="startSilence"
             ref="audioElement"
         ></audio>
+        <!-- Silent audio to enable pwa playback on ios devices-->
         <audio muted src="/silent.mp3" loop autoplay></audio>
 
     </div>
