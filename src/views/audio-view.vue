@@ -4,6 +4,7 @@
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
     import { registerActionHandler, setMetaData } from '../helper/mediasession-manager';
+    import useSleepTimer from '../helper/sleeptimer';
     
     const posterPath = ref('');
     const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
@@ -12,6 +13,16 @@
     const route = useRoute();
 
     const data: Ref<DetailAudio> = ref({detail: {}, audio: Array()} as DetailAudio);
+
+    async function pause(){
+        if (!audioElement.value) return;
+        await audioElement.value.pause();
+    }
+
+    async function play(){
+        if (!audioElement.value) return;
+        await audioElement.value.play();
+    }
 
     async function playNextChapter(){
         if(!audioElement.value) return
@@ -43,9 +54,9 @@
 
         if (!audioElement.value) return;
         // awaits are important to wait for the audio to load before playing it
-        await audioElement.value.pause();
+        await pause();
         await audioElement.value.load();
-        await audioElement.value.play();;
+        await play();
     }
 
     function getTrackName(id: number): string{
@@ -60,7 +71,6 @@
         .then(d => data.value = d) // set data
         .then(() => loadChapter(data.value.audio[0].audioID.toString())); // set first chapter
     }
-    
 
     onMounted(() =>{
         fetchData();
@@ -88,12 +98,12 @@
             id="album-art"
             :src="posterPath" />
         <h1>{{  data.detail.name }}</h1>
-        <audio :src="audioSrcBase + currentAudioID" controls
+        <audio v-if="currentAudioID" :src="audioSrcBase + currentAudioID" controls
             @ended="playNextChapter"
             ref="audioElement"
         ></audio>
         <!-- Silent audio to enable pwa playback on ios devices-->
-        <audio muted src="/silent.mp3" loop autoplay></audio>
+        <audio muted src="/silence.mp3" loop autoplay></audio>
 
     </div>
 
