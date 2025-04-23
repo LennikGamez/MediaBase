@@ -35,7 +35,9 @@
         currentAudioID.value = id
         setMetaData(getTrackName(parseInt(currentAudioID.value)), "Marc Dieter", data.value.detail.name, [
             {
-                src: posterPath.value
+                src: posterPath.value,
+                sizes: '',
+                type: ''
             }
         ])
 
