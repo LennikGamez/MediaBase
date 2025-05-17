@@ -3,12 +3,13 @@
     import { useRoute } from 'vue-router';
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
-    import { registerActionHandler, setMetaData } from '../helper/mediasession-manager';
-    import useSleepTimer from '../helper/sleeptimer';
+    import { registerActionHandler, setMetaData, setPositionState } from '../helper/mediasession-manager';
+    
+    // import sleeptimeSelectComponent from '../components/sleeptime-select-component.vue';
     
     const posterPath = ref('');
     const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
-    const currentAudioID = ref('');
+    const currentAudioID = ref('null');
     const audioElement = ref<HTMLAudioElement | null>(null);
     const route = useRoute();
 
@@ -16,7 +17,7 @@
 
     async function pause(){
         if (!audioElement.value) return;
-        await audioElement.value.pause();
+        audioElement.value.pause();
     }
 
     async function play(){
@@ -30,8 +31,7 @@
             return
         }
         let nextID = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) + 1].audioID.toString();;
-        loadChapter(nextID);
-
+        loadChapter(nextID).finally(()=>play());
     }
 
     async function playPreviousChapter(){
@@ -39,24 +39,29 @@
         if (parseInt(currentAudioID.value) == (data.value as DetailAudio).audio[0].audioID) return;
 
         let previousID = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) - 1].audioID.toString();
-        loadChapter(previousID);
+        loadChapter(previousID).finally(()=>play());
     }
 
     async function loadChapter(id: string){
         currentAudioID.value = id
+
+        if (!audioElement.value) return;
+
+        audioElement.value.currentTime = 0;
+        
+        // awaits are important to wait for the audio to load before playing it
+        audioElement.value.load();
+
+        
         setMetaData(getTrackName(parseInt(currentAudioID.value)), "Marc Dieter", data.value.detail.name, [
             {
                 src: posterPath.value,
                 sizes: '',
                 type: ''
             }
-        ])
+        ]);
 
-        if (!audioElement.value) return;
-        // awaits are important to wait for the audio to load before playing it
-        await pause();
-        await audioElement.value.load();
-        await play();
+        setPositionState(audioElement.value.duration, audioElement.value.currentTime, audioElement.value.playbackRate);
     }
 
     function getTrackName(id: number): string{
@@ -76,8 +81,8 @@
         fetchData();
         // setup the MediaSession handlers
             registerActionHandler("nexttrack", playNextChapter);
-            registerActionHandler("play", () => audioElement.value?.play())
-            registerActionHandler("pause", ()=> audioElement.value?.pause())
+            registerActionHandler("play", () => play())
+            registerActionHandler("pause", ()=> pause())
             registerActionHandler("previoustrack", playPreviousChapter)
             registerActionHandler("seekto", (details)=> {
                 if (!audioElement.value) return;
@@ -103,7 +108,8 @@
             ref="audioElement"
         ></audio>
         <!-- Silent audio to enable pwa playback on ios devices-->
-        <audio muted src="/silence.mp3" loop autoplay></audio>
+        <!-- <audio controls muted src="/silence.mp3" loop autoplay></audio> -->
+        <!-- <sleeptimeSelectComponent @finished="pause()"/> -->
 
     </div>
 
