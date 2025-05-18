@@ -22,7 +22,7 @@ function stringIncludes(a: string, b: string) {
 <template>
   <div class="grid">
     <nav>
-      <h1>Library</h1>
+      <h1>MediaBase</h1>
       <input
         id="searchbar"
         type="etxt"
@@ -51,6 +51,25 @@ nav {
   width: 100%;
   height: 7rem;
   background-color: var(--bg-color);
+
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  place-items: center;
+}
+
+#searchbar {
+  outline: none;
+  border: none;
+
+  padding: 8px 16px;
+  border-radius: 8px;
+  width: 200px;
+
+  transition: width 1s;
+}
+
+#searchbar:focus {
+  width: 500px;
 }
 
 #library-container {
