@@ -47,12 +47,15 @@ function rerouteToDetails() {
   --border-radius: 8px;
   --hover-speed: 0.7s;
 
+  max-width: 400px;
   width: 100%;
-  padding-bottom: 150%; /* aspect-ratio is not supported on webOS TV :C */
+  padding-bottom: min(
+    150%,
+    600px
+  ); /* aspect-ratio is not supported on webOS TV :C */
   position: relative;
   overflow-wrap: word;
   z-index: 100;
-
   transition:
     transform var(--hover-speed),
     -webkit-box-shadow var(--hover-speed) ease-in-out;
