@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MediaComponent from "../components/media-component.vue";
 import { Media } from "../types";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const media = ref(Array<Media>());
 const searchInput = ref("");
@@ -17,6 +17,12 @@ function stringIncludes(a: string, b: string) {
   // splits  string into array and checks if each word is included in the other string
   return a.split(" ").every((word) => b.includes(word));
 }
+
+const filteredMediaItems = computed(() => {
+  return media.value.filter((m) =>
+    stringIncludes(searchInput.value.toLowerCase(), m.name.toLowerCase()),
+  );
+});
 </script>
 
 <template>
@@ -31,13 +37,8 @@ function stringIncludes(a: string, b: string) {
       />
     </nav>
     <div id="library-container">
-      <MediaComponent
-        v-for="m in media.filter((m) =>
-          stringIncludes(searchInput.toLowerCase(), m.name.toLowerCase()),
-        )"
-        :key="m.name"
-        :data="m"
-      />
+      <h4 v-if="filteredMediaItems.length == 0">Nothing here...</h4>
+      <MediaComponent v-for="m in filteredMediaItems" :key="m.name" :data="m" />
     </div>
   </div>
 </template>
