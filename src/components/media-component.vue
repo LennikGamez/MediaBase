@@ -35,7 +35,7 @@ function rerouteToDetails() {
 
 <template>
   <div class="media" ref="wrapper" @click="rerouteToDetails">
-    <img :src="posterLink" loading="lazy" />
+    <img :src="posterLink" loading="lazy" class="skeleton" />
     <h4 class="title">{{ props.data.name }}</h4>
   </div>
 </template>
