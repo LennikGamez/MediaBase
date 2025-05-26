@@ -5,7 +5,7 @@
     import { DetailAudio } from '../types';
     import { registerActionHandler, setMetaData, setPositionState } from '../helper/mediasession-manager';
     
-    // import sleeptimeSelectComponent from '../components/sleeptime-select-component.vue';
+    import sleeptimeSelectComponent from '../components/sleeptime-select-component.vue';
     
     const posterPath = ref('');
     const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
@@ -109,7 +109,7 @@
         ></audio>
         <!-- Silent audio to enable pwa playback on ios devices-->
         <!-- <audio controls muted src="/silence.mp3" loop autoplay></audio> -->
-        <!-- <sleeptimeSelectComponent @finished="pause()"/> -->
+        <sleeptimeSelectComponent @finished="pause()"/>
 
     </div>
 
