@@ -18,11 +18,13 @@
     async function pause(){
         if (!audioElement.value) return;
         audioElement.value.pause();
+        updatePositionState();
     }
 
     async function play(){
         if (!audioElement.value) return;
         await audioElement.value.play();
+        updatePositionState();
     }
 
     async function playNextChapter(){
@@ -46,6 +48,7 @@
         currentAudioID.value = id
 
         if (!audioElement.value) return;
+        navigator.mediaSession.playbackState = "paused" // needed to prevent the timeline from progessing without a file loaded
 
         audioElement.value.currentTime = 0;
         
@@ -61,7 +64,14 @@
             }
         ]);
 
-        setPositionState(audioElement.value.duration, audioElement.value.currentTime, audioElement.value.playbackRate);
+        updatePositionState();
+    }
+
+    function updatePositionState(){
+        if (!audioElement.value) return;
+        if (!audioElement.value.duration) return
+        navigator.mediaSession.playbackState = audioElement.value.paused ? "paused" : "playing";
+        setPositionState(audioElement.value.duration, audioElement.value.currentTime, audioElement.value.playbackRate)
     }
 
     function getTrackName(id: number): string{
@@ -81,14 +91,16 @@
         fetchData();
         // setup the MediaSession handlers
             registerActionHandler("nexttrack", playNextChapter);
-            registerActionHandler("play", () => play())
-            registerActionHandler("pause", ()=> pause())
-            registerActionHandler("previoustrack", playPreviousChapter)
+            registerActionHandler("play", () => play());
+            registerActionHandler("pause", ()=> pause());
+            registerActionHandler("previoustrack", playPreviousChapter);
             registerActionHandler("seekto", (details)=> {
-                if (!audioElement.value) return;
-                if (!details.seekTime) return;
-                 audioElement.value.currentTime = details.seekTime}
-                )
+                    if (!audioElement.value) return;
+                    if (!details.seekTime) return;
+                    audioElement.value.currentTime = details.seekTime;
+                    updatePositionState();
+                }
+            );
         //
         posterPath.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`
 
@@ -105,8 +117,12 @@
         <h1>{{  data.detail.name }}</h1>
         <audio v-if="currentAudioID" :src="audioSrcBase + currentAudioID" controls
             @ended="playNextChapter"
+            @play="play"
+            @pause="pause"
             ref="audioElement"
         ></audio>
+        <!-- play and pause are only needed as long as there are no custom controls -->
+
         <!-- Silent audio to enable pwa playback on ios devices-->
         <!-- <audio controls muted src="/silence.mp3" loop autoplay></audio> -->
         <sleeptimeSelectComponent @finished="pause()"/>
