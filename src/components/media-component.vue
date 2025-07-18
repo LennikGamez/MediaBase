@@ -64,6 +64,7 @@ img {
   display: block;
   border-radius: var(--border-radius);
   object-fit: cover;
+  opacity: 1;
 
   position: absolute;
   top: 0;
