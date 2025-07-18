@@ -1,6 +1,6 @@
 
 export default class APIConnector {
-  public static IP_ADDRESS: string = "http://192.168.178.120:8000";
+  public static IP_ADDRESS: string = "http://192.168.178.194:3000";
 
   private static async fetchEndpoint(endpoint: string){
     const response = await fetch(
@@ -13,13 +13,13 @@ export default class APIConnector {
   }
 
   // general
-  public static getPosterPathByEntryID(entryID: string){
-    return this.IP_ADDRESS + `/poster/${entryID}`
+  public static getPosterPathByPosterPath(posterPath: string){
+    return this.IP_ADDRESS + `/poster?file=${posterPath}`
   }
   
   // library view
   public static async getLibraryData(){
-    return await this.fetchEndpoint("/media");
+    return await this.fetchEndpoint("/library");
   } 
 
   // detail view

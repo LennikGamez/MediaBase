@@ -12,7 +12,7 @@
         }
     });
 
-    const posterLink = ref(APIConnector.getPosterPathByEntryID(props.data.entryID.toString()));
+    const posterLink = ref(APIConnector.getPosterPathByPosterPath(props.data.poster));
 
     const wrapper = ref(HTMLDivElement)
 
@@ -21,10 +21,10 @@
         switch (props.data.type) {
             case 0:
             case 1:
-                router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type});
+                router.push({path: "/detail/" + props.data.name+ "/" + props.data.type});
                 break;
             case 2:
-                router.push({path: "/audio/" + props.data.entryID});
+                router.push({path: "/audio/" + props.data.name});
                 break;
 
         }
