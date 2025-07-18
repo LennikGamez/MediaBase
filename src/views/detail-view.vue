@@ -2,55 +2,32 @@
     import VideoPlayer from '../components/video-player.vue';
     import { ref, Ref } from 'vue';
     import { useRoute } from 'vue-router';
-    import { DetailMovie, DetailShow } from '../types';
+    import { Episode, Language, MovieDetails, SeriesDetails, Subtitle } from '../types';
     import APIConnector from '../helper/APIConnector'; 
     import episodeComponent from '../components/episode-component.vue';
 
-    var data: Ref<DetailMovie | DetailShow | null> = ref(null);
+    var data: Ref<MovieDetails | SeriesDetails | null> = ref(null);
     const route = useRoute();
-    const entryID = route.params.entryID as string;
+    const name = route.params.name as string;
     const type = route.params.type as string;
     const videoPlayer = ref<typeof VideoPlayer | null>(null);
     // load all information about the selected entry
 
-    APIConnector.getDetailOf(entryID, type).then(detail => data.value = detail)
+    APIConnector.getDetailOf(name, type).then(detail => {
+        data.value = detail;
+    })
     
-
-    /**
-     * fetches all available languages of given entry
-     * @param entryID 
-     * @param episodeID 
-     */
-    async function getAvailableLanguages(entryID: number, episodeID: number | null) {
-        let data;
-        switch (type) {
-            case "0":
-                data = await APIConnector.getAvailableLanguagesByEntryID(entryID);
-                break;
-            case "1":
-                data = await APIConnector.getAvailableLanguagesByEpisodeID(entryID, episodeID as number)
-                break;
-                
-        }
-
-        
-        let langs = data.map((item: { language: string;}) => item.language);
-        return langs;
-    }
-
     /**
      * calls play function in the videoplayer component
      * @param entryID 
      * @param episodeID 
      */
-    async function play(entryID: number, episodeID: number | null) {       
+    async function play(languages: Language[], subtitles: Subtitle[]){       
         if (!videoPlayer.value) return;
+        console.log(languages, subtitles)
         videoPlayer.value.play(
-            parseInt(type),
-             entryID,
-              episodeID,
-               (data.value as DetailMovie).detail.movieID,
-                await getAvailableLanguages(entryID, episodeID)
+            languages,
+            subtitles
             );
     }
 
@@ -64,37 +41,47 @@
         if (!data.value) return;
         switch (type) {
             case "0":   // movie  
-                play(data.value.detail.entryID, null);
+                const movieData = data.value as MovieDetails;
+                play(movieData.languages, movieData.subtitles);
                 break;
             case "1":   // show
-                const showData = data.value as DetailShow
-                const seasons = Object.values(showData.seasons)
-                play(data.value.detail.entryID, seasons[0][0].episodeID);
+                const showData = data.value as SeriesDetails;
+                const seasons = Object.values(showData.seasons);
+                const firstEpisodePath = seasons[0].episodes[0];
+                playEpisode(firstEpisodePath)
                 break;
         }
     }
 
-    function onEpisodeStart(id: number){      
-        if (!data.value) return;
-        play(data.value.detail.entryID, id);
+    function playEpisode(episode: Episode){
+        APIConnector.getEpisode(episode.path).then((episodeData: MovieDetails)=> {
+            if (!videoPlayer.value) return;
+            play(episodeData.languages, episodeData.subtitles);
+            videoPlayer.value.setCurrentEpisodeName(episode.name)
+        });
     }
 
-    function onVideoEnd(event: Event & {type: number, id: number}){
+    function onEpisodeStart(path: string, name: string){      
+        if (!data.value) return;
+        playEpisode({path, name});
+    }
+
+    function onVideoEnd(event: Event & {type: number, currentEpisodeName: string}){
         if (!videoPlayer.value) return;
         if (event.type == 0) return;    // movie ended
         // episode ended
-        playNextEpisode(event.id);
+        playNextEpisode(event.currentEpisodeName);
     }
 
-    function playNextEpisode(currentEpisodeID: number){
+    function playNextEpisode(currentEpisodeName: string){
         if (!data.value) return;
-        for (const season in (data.value as DetailShow).seasons){
-            const episodes = (data.value as DetailShow).seasons[season];
+        for (const season in (data.value as SeriesDetails).seasons){
+            const episodes = (data.value as SeriesDetails).seasons[season].episodes;
             for (const episode of episodes){
-                if (episode.episodeID == currentEpisodeID){
+                if (episode.name == currentEpisodeName){
                     const nextEpisode = episodes[episodes.indexOf(episode) + 1];
                     if (nextEpisode){
-                        play(data.value.detail.entryID, nextEpisode.episodeID);
+                        playEpisode(nextEpisode);
                         return;
                     }
                 }
@@ -109,16 +96,16 @@
         <VideoPlayer ref="videoPlayer" id="video" @endVideo="onVideoEnd"/>
         <div id="details">
             <div id="header">
-                <h1 id="title" :class="data?.detail.name">{{ data?.detail.name }}</h1>
+                <h1 id="title" :class="route.params.name">{{ route.params.name }}</h1>
                 <!-- <p id="duration">1:30h</p> -->
-                <p id="description">{{ data?.detail.description }}</p>
+                <!-- <p id="description">{{ data?.detail.description }}</p> -->
             </div>
             <div></div>
             <button id="play-btn" class="btn focusable" tabindex="0" @click="onMainPlayButton">Play</button>
-            <div v-if="data?.detail.type == 1" id="seasons">
-                <div class="season" v-for="(item, index) in (data as DetailShow).seasons" :key="index">
-                    <h4 class="season-index">{{ index }}</h4>
-                    <episodeComponent v-for="(episode, index) in item" :key="index" :name="episode.name" :description="episode.description" :episodeID="episode.episodeID" @startEpisode="onEpisodeStart" />
+            <div v-if="route.params.type == '1'" id="seasons">
+                <div v-if="data" class="season" v-for="(item, index) in (data as SeriesDetails).seasons" :key="index">
+                    <h4 class="season-index">{{ item.seasonNum }}</h4>
+                    <episodeComponent v-for="(episode, index) in item.episodes" :key="index" :name="episode.name" :description="'s'" :episodePath="episode.path" @startEpisode="onEpisodeStart" />
                 </div>
             </div>
         </div>

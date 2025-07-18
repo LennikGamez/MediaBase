@@ -1,13 +1,13 @@
 <script setup lang="ts">
     const props = defineProps({
-        episodeID: Number,
+        episodePath: String,
         name: String,
         description: String
     });
     const emit = defineEmits(['startEpisode']);
 
     function startEpisode(){
-        emit('startEpisode', props.episodeID);
+        emit('startEpisode', props.episodePath, props.name);
     }
 
 </script>

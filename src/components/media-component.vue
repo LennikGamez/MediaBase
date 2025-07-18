@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+, setPosterPath<script lang="ts" setup>
     import { useRouter } from 'vue-router';
     import { Media } from '../types';
     import { ref } from 'vue';
@@ -12,7 +12,7 @@
         }
     });
 
-    const posterLink = ref(APIConnector.getPosterPathByPosterPath(props.data.poster));
+    const posterLink = ref(APIConnector.getPosterURLByPosterPath(props.data.poster));
 
     const wrapper = ref(HTMLDivElement)
 

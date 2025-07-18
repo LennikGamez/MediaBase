@@ -13,7 +13,7 @@ export default class APIConnector {
   }
 
   // general
-  public static getPosterPathByPosterPath(posterPath: string){
+  public static getPosterURLByPosterPath(posterPath: string){
     return this.IP_ADDRESS + `/poster?file=${posterPath}`
   }
   
@@ -23,8 +23,17 @@ export default class APIConnector {
   } 
 
   // detail view
-  public static async getDetailOf(entryID: string, type: string){
-    return await this.fetchEndpoint(`/detail/${entryID}/${type}`);
+  public static async getDetailOf(name: string, type: string){
+    switch(type){
+      case "0":
+        return await this.fetchEndpoint(`/movie/${name}`);
+      case "1":
+        return await this.fetchEndpoint(`/series/${name}`);
+      case "2":
+        return await this.fetchEndpoint(`/audio/${name}`);
+      default:
+        break
+    }
   }
   public static async getAvailableLanguagesByEntryID(entryID: number){
     return await this.fetchEndpoint(`/available-languages/${entryID}`);
@@ -40,18 +49,20 @@ export default class APIConnector {
 
 
   // video player component
-  public static getStreamEndpoint(entryID: string, language: string){
-    return this.getEndpointURL(`/stream/${entryID}/${language}`)
-  }
-  public static getStreamEndpointForEpisode(entryID: string, episodeID: string, language: string){
-    return this.getEndpointURL(`/stream/show/${entryID}/episode/${episodeID}/${language}`)
+  public static getStreamEndpoint(filePath: string){
+    return this.getEndpointURL(`/stream?file=${filePath}`)
   }
 
   // subitile manager
-  public static async getSubtitlesForMovie(movieID: number){
-    return await this.fetchEndpoint("/subtitles-movie/"+movieID)
+  public static async getSubtitle(path: string){
+    return await this.fetchEndpoint("/subtitle?file="+path)
   }
   public static async getSubtitlesForEpisode(episodeID: number){
     return await this.fetchEndpoint("/subtitles-episode/"+episodeID);
+  }
+
+
+  public static async getEpisode(episodePath: string){
+    return await this.fetchEndpoint("/episode?dir=" + episodePath);
   }
 }

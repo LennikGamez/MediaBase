@@ -2,30 +2,30 @@
     import { onMounted, ref, Ref } from 'vue';
     import { useRoute } from 'vue-router';
     import chapterComponent from '../components/chapter-component.vue';
-    import { DetailAudio } from '../types';
+    import { AudioDetails } from '../types';
     import APIConnector from '../helper/APIConnector';
     
     const posterPath = ref('');
-    const audioSrcBase = ref(APIConnector.getAudioStreamEndpoint());
-    const currentAudioID = ref('');
+    const audioSrc = ref("");
     const audioElement = ref<HTMLAudioElement | null>(null);
     const route = useRoute();
 
-    const data: Ref<DetailAudio> = ref({detail: {}, audio: Array()} as DetailAudio);
+    const data: Ref<AudioDetails> = ref({audioFiles: []});
 
     async function playNextChapter(){
         if(!audioElement.value) return
-        if(parseInt(currentAudioID.value) == (data.value as DetailAudio).audio[data.value.audio.length - 1].audioID){
+        const currentIndex = data.value.audioFiles.findIndex((str: string)=> audioSrc.value.includes(str));
+        if( currentIndex >= data.value.audioFiles.length){
             return
         }
-        currentAudioID.value = data.value.audio[data.value.audio.findIndex(item => item.audioID.toString() == currentAudioID.value) + 1].audioID.toString();;
+        streamAudio(data.value.audioFiles[currentIndex + 1]);
 
         await audioElement.value.load();
         await audioElement.value.play();
     }
 
-    async function loadChapter(id: string){
-        currentAudioID.value = id
+    async function loadChapter(path: string){
+        streamAudio(path);
 
         await audioElement.value?.pause();
         await audioElement.value?.load();
@@ -33,14 +33,18 @@
     }
 
     function fetchData(){
-        APIConnector.getDetailOf(route.params.entryID as string, "2").then(d => data.value = d) // set data
-        .then(() => currentAudioID.value = data.value.audio[0].audioID.toString()); // set first chapter
+        APIConnector.getDetailOf(route.params.name as string, "2").then(d => data.value = d) // set data
+        .then(() => streamAudio(data.value.audioFiles[0])); // set first chapter
+    }
+
+    function streamAudio(audioPath: string){
+        audioSrc.value = APIConnector.getStreamEndpoint(audioPath);
     }
     
     fetchData();
 
     onMounted(() =>{
-        posterPath.value = APIConnector.getPosterPathByEntryID(route.params.entryID as string);
+        // posterPath.value = APIConnector.getPosterPathByEntryID(route.params.entryID as string);
     })
 </script>
 
@@ -50,8 +54,8 @@
         <img
             id="album-art"
             :src="posterPath" />
-        <h1>{{  data.detail.name }}</h1>
-        <audio :src="audioSrcBase + currentAudioID" controls
+        <h1>{{  route.params.name }}</h1>
+        <audio :src="audioSrc" controls
             @ended="playNextChapter"
             ref="audioElement"
         ></audio>
@@ -59,10 +63,10 @@
     </div>
 
     <div class="chapters">
-        <chapterComponent v-for="(item, index) in (data as DetailAudio).audio" :key="index"
-            :num = "item.number"
-            :name = "item.name"
-            :id = "item.audioID"
+        <chapterComponent v-for="(item, index) in (data as AudioDetails).audioFiles" :key="index"
+            :num = "index"
+            :name = "item"
+            :path = "item"
             @startChapter="loadChapter"
         />
     </div>

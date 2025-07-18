@@ -4,11 +4,11 @@
     const props = defineProps({
         name: String,
         num: Number,
-        id: Number
+        path: String
     });
 
     function onChapterClick(){        
-        emit('startChapter', props.id);
+        emit('startChapter', props.path);
     }
 </script>
 

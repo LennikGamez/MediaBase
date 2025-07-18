@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { inject, onMounted, Ref, ref } from 'vue';
+    import { inject, Ref, ref } from 'vue';
     import LanguagePop from './popover/language-popover.vue';
     import SubtitlePop from './popover/subtitle-popover.vue';
     import { useRoute } from 'vue-router';
@@ -7,20 +7,16 @@
     import LoaderComponent from './loader-component.vue';
     import SubtitleComponent from './subtitle-component.vue';
     import SubtitleManager from '../helper/subtitle-manager';
-import APIConnector from '../helper/APIConnector';
+    import APIConnector from '../helper/APIConnector';
+    import { Language, Subtitle } from '../types';
 
     var timelineDrag = false;
     var fullscreenState = false;
 
-    let currentEntryID: number | null = null;
-    let currentEpisodeID: number | null = null;
-    let currentMovieID: number | null = null;
-    let currentType: number | null = null;
-
     const emit = defineEmits(['endVideo']);
 
     const preferredWatchLanguage = inject('preferredWatchLanguage') as Ref;
-    const availableLanguages = ref <string[]>([]);
+    const availableLanguages = ref <Language[]>([]);
 
     const route = useRoute();
    
@@ -34,7 +30,7 @@ import APIConnector from '../helper/APIConnector';
     const videoSrc = ref(''); 
     const posterSrc = ref('');
     const poster = ref<HTMLImageElement | null>(null);
-    const subTitleData = ref<Array<{[key: string]: string}>>([]);
+    const subTitleData = ref<{data: string, language: string}[]>([]);
 
     const loader = ref<InstanceType<typeof LoaderComponent> | null>(null);
 
@@ -252,8 +248,10 @@ import APIConnector from '../helper/APIConnector';
      * returns either the preferred language if available or the first language of the list
      * @param langs 
      */
-    function selectPreferredOrAvailableLanguage(langs: string[]){
-        if (langs.includes(preferredWatchLanguage.value)) return preferredWatchLanguage.value;
+    function selectPreferredOrAvailableLanguage(langs: Language[]){
+        const preferredLanguage = langs.find(obj => obj.language == preferredWatchLanguage.value);
+        if (preferredLanguage) return preferredLanguage;
+        // if (langs.includes(preferredWatchLanguage.value)) return preferredWatchLanguage.value;
         return langs[0];
     }
 
@@ -264,35 +262,30 @@ import APIConnector from '../helper/APIConnector';
      * @param episodeID 
      * @param languages 
      */
-    function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{        
-        const language = selectPreferredOrAvailableLanguage(languages);
-        switch (type){
-            case 0: // movie
-                return APIConnector.getStreamEndpoint(entryID.toString(), language);
-            case 1:
-                return APIConnector.getStreamEndpointForEpisode(entryID.toString(), (episodeID as number).toString(), language);
-            
-            default:
-                return ''; 
-        }
+    function getVideoSrc(playableLanguages: Language[]): string{        
+        const language = selectPreferredOrAvailableLanguage(playableLanguages);
+        return APIConnector.getStreamEndpoint(language.path);
     }
 
     // generates the video src for given type, entryID, episodeID and languages and reloads the player and starts the video
     // the languages parameter is used to select the preferred language if available if not it defaults to the first language of the video
-    function play(type: number, entryID: number, episodeID: number | null, movieID: number | null, languages: string[]){
+    function play(languages: Language[], subtitles: Subtitle[]){
         if (!videoElement.value) return;
-        currentEntryID = entryID;
-        currentEpisodeID = episodeID;
-        currentMovieID = movieID;
-        currentType = type;
+        if (!poster.value) return
+        // currentEntryID = entryID;
+        // currentEpisodeID = episodeID;
+        // currentMovieID = movieID;
+        // currentType = type;
         availableLanguages.value = languages;
 
-        SubtitleManager.loadBasedOnTypeAndID(route.params.type[0], currentMovieID, currentEpisodeID)?.then(data => subTitleData.value = data);
-        
+        SubtitleManager.loadSubtitles(subtitles).then(data => {
+            subTitleData.value = data;
+        })
+        // 
         updateLanguageBasedOnPreferredLanguage();                
         startVideo();
 
-        poster.value?.classList.add('hidden');
+        poster.value.classList.add('hidden');
         videoElement.value.scrollIntoView();
     }
     function startVideo(){
@@ -301,9 +294,7 @@ import APIConnector from '../helper/APIConnector';
         videoElement.value.play();
     }
     function updateLanguageBasedOnPreferredLanguage(){        
-        if (currentType === null || currentEntryID === null) return;
-        videoSrc.value = getVideoSrc(currentType, currentEntryID, currentEpisodeID, availableLanguages.value);
-        
+        videoSrc.value = getVideoSrc(availableLanguages.value);
     }
 
     function changeLanguage(lang: String){
@@ -337,23 +328,28 @@ import APIConnector from '../helper/APIConnector';
         if (!videoElement.value) return;
         if (videoElement.value.currentTime === videoElement.value.duration) {
             videoElement.value.currentTime = 0;
-            switch (currentType){
-                case 0:
-                    emit('endVideo', {type: currentType, id: currentMovieID});
+            switch (route.params.type){
+                case "0":
+                    emit('endVideo', {type: route.params.type });
                     break;
-                case 1:
-                    emit('endVideo', {type: currentType, id: currentEpisodeID});
+                case "1":
+                    emit('endVideo', {type: route.params.type, currentEpisodeName});
                     break
             }
         }
     }
 
-    defineExpose({play});
+    let currentEpisodeName = "";
+    function setCurrentEpisodeName(name: string){
+        currentEpisodeName = name;
+    }
 
+    function setPosterPath(path: string){
+        posterSrc.value = APIConnector.getPosterURLByPosterPath(path);
+    }
 
-    onMounted(() => {
-        posterSrc.value = APIConnector.getPosterPathByEntryID(route.params.entryID as string);
-    })
+    defineExpose({play, setCurrentEpisodeName, setPosterPath});
+
 </script>
 
 
@@ -383,7 +379,7 @@ import APIConnector from '../helper/APIConnector';
                             <div class="right-controls">
                                 <div class="control-element lang-btn popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/language.svg">
-                                    <LanguagePop class="popover" id="language-select" :availableLangs="availableLanguages" @changeLanguage="changeLanguage"/> 
+                                    <LanguagePop class="popover" id="language-select" :availableLangs="availableLanguages.map(lang => lang.language)" @changeLanguage="changeLanguage"/> 
                                 </div>
                                 <div class="control-element sub popoverInvoker" tabindex="0">
                                     <img src="../assets/control-icons/subtitles.svg">
@@ -399,7 +395,7 @@ import APIConnector from '../helper/APIConnector';
 
                     <video playsinline ref="videoElement" @loadstart="showLoader" @loadeddata="hideLoader" @play="onPlay" @pause="onPause" @timeupdate="updateTimeline" @waiting=showLoader @playing=hideLoader @ended="onVideoEnd">
                         <source id="source" :src="videoSrc">
-                        <SubtitleComponent :subID="parseInt(item.subID)" v-for="(item, index) in subTitleData" :key="index"/>
+                        <SubtitleComponent :sub="item" v-for="item in subTitleData" :key="item.language"/>
                     </video>
                 </div>
             </div>

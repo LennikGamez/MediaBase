@@ -1,12 +1,13 @@
+import { Subtitle } from "../types";
 import APIConnector from "./APIConnector";
 export default class SubtitleManager{
 
-    public static loadBasedOnTypeAndID(type: string, movieID: number | null, episodeID: number | null){
-        switch (type){
-            case "0":
-                return APIConnector.getSubtitlesForMovie(movieID as number);
-            case "1":
-                return APIConnector.getSubtitlesForEpisode(episodeID as number);
-        }
+    public static async loadSubtitles(subs: Subtitle[]){
+        const subPromises = subs.map(async (sub)=>{
+            return await APIConnector.getSubtitle(sub.path);
+        })
+
+        const subtitles = await Promise.all(subPromises);
+        return subtitles;
     }
 }
