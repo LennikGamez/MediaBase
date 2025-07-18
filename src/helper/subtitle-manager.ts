@@ -1,23 +1,12 @@
+import APIConnector from "./APIConnector";
 export default class SubtitleManager{
-
-    public static async getSubtitlesForMovie(movieID: number){
-        const resp = await fetch("http://192.168.178.120:8000/subtitles-movie/"+movieID);
-        const data = await resp.json();
-        return data; 
-    }
-
-    public static async getSubtitlesForEpisode(episodeID: number){
-        const resp = await fetch("http://192.168.178.120:8000/subtitles-episode/"+episodeID);
-        const data = await resp.json();
-        return data; 
-    }
 
     public static loadBasedOnTypeAndID(type: string, movieID: number | null, episodeID: number | null){
         switch (type){
             case "0":
-                return SubtitleManager.getSubtitlesForMovie(movieID as number);
+                return APIConnector.getSubtitlesForMovie(movieID as number);
             case "1":
-                return SubtitleManager.getSubtitlesForEpisode(episodeID as number);
+                return APIConnector.getSubtitlesForEpisode(episodeID as number);
         }
     }
 }

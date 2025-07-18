@@ -3,15 +3,17 @@
     import { ref, Ref } from 'vue';
     import { useRoute } from 'vue-router';
     import { DetailMovie, DetailShow } from '../types';
+    import APIConnector from '../helper/APIConnector'; 
     import episodeComponent from '../components/episode-component.vue';
 
     var data: Ref<DetailMovie | DetailShow | null> = ref(null);
     const route = useRoute();
+    const entryID = route.params.entryID as string;
     const type = route.params.type as string;
     const videoPlayer = ref<typeof VideoPlayer | null>(null);
     // load all information about the selected entry
 
-    fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/" + route.params.type).then(res => res.json()).then(detail => data.value = detail)
+    APIConnector.getDetailOf(entryID, type).then(detail => data.value = detail)
     
 
     /**
@@ -20,18 +22,18 @@
      * @param episodeID 
      */
     async function getAvailableLanguages(entryID: number, episodeID: number | null) {
-        let res;
+        let data;
         switch (type) {
             case "0":
-                res = await fetch(`http://192.168.178.120:8000/available-languages/${entryID}`);
+                data = await APIConnector.getAvailableLanguagesByEntryID(entryID);
                 break;
             case "1":
-                res = await fetch(`http://192.168.178.120:8000/available-languages/${entryID}/${episodeID}`)
+                data = await APIConnector.getAvailableLanguagesByEpisodeID(entryID, episodeID as number)
                 break;
                 
         }
 
-        const data = await res?.json();
+        
         let langs = data.map((item: { language: string;}) => item.language);
         return langs;
     }

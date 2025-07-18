@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import MediaComponent from "../components/media-component.vue";
 import { Media } from "../types";
-import { computed, ref } from "vue";
-
+import { ref } from "vue";
+import APIConnector from "../helper/APIConnector"; 
+    
 const media = ref(Array<Media>());
-const searchInput = ref("");
-function fetchMedia() {
-  fetch("http://192.168.178.120:8000/media")
-    .then((res) => res.json())
-    .then((data) => (media.value = data));
+const searchInput = ref(""); 
+function fetchMedia(){
+    APIConnector.getLibraryData().then(data => media.value = data)
 }
 
 fetchMedia();
@@ -83,6 +82,7 @@ nav {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 
 #library-container::-webkit-scrollbar {
   display: none;

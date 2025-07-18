@@ -1,36 +1,35 @@
 <script lang="ts" setup>
-import { useRouter } from "vue-router";
-import { Media } from "../types";
-import { ref } from "vue";
+    import { useRouter } from 'vue-router';
+    import { Media } from '../types';
+    import { ref } from 'vue';
+    import APIConnector from '../helper/APIConnector'; 
 
-const router = useRouter();
-const props = defineProps({
-  data: {
-    type: Object as () => Media,
-    required: true,
-  },
-});
+    const router = useRouter();
+    const props = defineProps({
+        data: {
+            type: Object as () => Media,
+            required: true
+        }
+    });
 
-const posterLink = ref(
-  "http://192.168.178.120:8000/poster/" + props.data.entryID,
-);
+    const posterLink = ref(APIConnector.getPosterPathByEntryID(props.data.entryID.toString()));
 
-const wrapper = ref(HTMLDivElement);
+    const wrapper = ref(HTMLDivElement)
 
-function rerouteToDetails() {
-  console.log("reroute to details of " + props.data.name);
-  switch (props.data.type) {
-    case 0:
-    case 1:
-      router.push({
-        path: "/detail/" + props.data.entryID + "/" + props.data.type,
-      });
-      break;
-    case 2:
-      router.push({ path: "/audio/" + props.data.entryID });
-      break;
-  }
-}
+    function rerouteToDetails(){
+        console.log("reroute to details of " + props.data.name);
+        switch (props.data.type) {
+            case 0:
+            case 1:
+                router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type});
+                break;
+            case 2:
+                router.push({path: "/audio/" + props.data.entryID});
+                break;
+
+        }
+    }
+
 </script>
 
 <template>
