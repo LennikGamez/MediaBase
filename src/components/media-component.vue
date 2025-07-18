@@ -33,79 +33,121 @@
 </script>
 
 <template>
-    <div class="media" ref="wrapper" @click="rerouteToDetails">
-        <img :src="posterLink" loading="lazy">
-        <h4 class="title">{{ props.data.name }}</h4>
-    </div>
+  <div class="media" ref="wrapper" @click="rerouteToDetails">
+    <img :src="posterLink" loading="lazy" class="skeleton" />
+    <h4 class="title">{{ props.data.name }}</h4>
+  </div>
 </template>
 
 <style scoped>
-    .media{
-        --hover-shadow: 0%;
-        --default-shadow: 60%;
-        --border-radius: 8px;
-        --hover-speed: 0.5s;
-        --resize: 30px;
-        --size: 300px;
+.media {
+  --hover-shadow: 0%;
+  --default-shadow: 60%;
+  --border-radius: 8px;
+  --hover-speed: 0.7s;
 
-        width: var(--size);
-        height: fit-content;
-        position: relative;
-        overflow-wrap: anywhere;
+  max-width: 400px;
+  width: 100%;
+  padding-bottom: min(
+    150%,
+    600px
+  ); /* aspect-ratio is not supported on webOS TV :C */
+  position: relative;
+  overflow-wrap: word;
+  z-index: 100;
+  transition:
+    transform var(--hover-speed),
+    -webkit-box-shadow var(--hover-speed) ease-in-out;
+}
 
-        transition: width var(--hover-speed), margin var(--hover-speed);
-    }
+img {
+  display: block;
+  border-radius: var(--border-radius);
+  object-fit: cover;
 
-    img{
-        display: block;
-        width: 100%;
-        border-radius: var(--border-radius); 
-    }
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* also aspect-ratio replacement */
+}
 
-    .title{
-        position: absolute;
-        bottom: 0;
-        max-width: var(--size);
-        
-        color: white;
-        position: absolute;
-        bottom: 0;
-        padding: 5px;
-        margin: 10px;
-        font-size: 1.5rem;
-        pointer-events: none;
-        transition: font-size var(--hover-speed);
-    }
+.title {
+  position: absolute;
+  bottom: 0;
+  max-width: 100%;
 
-    .media:hover{
-        width: calc(var(--size) + var(--resize));
+  color: white;
+  position: absolute;
+  bottom: 0;
+  padding: 5px;
+  margin: 10px;
+  font-size: 1.5rem;
+  pointer-events: none;
 
-    }
+  z-index: 501;
+}
 
-    .media:hover .title{
-        font-size: 1.85rem;
-    }
+@media (hover: hover) {
+  /* only on devices without touchscreen */
+  .media:hover {
+    --shadow-color: rgba(121, 9, 74, 1);
+    transform: scale(1.3);
+    z-index: 101;
 
-    .media::before{
-        content: '';
-        border-radius: var(--border-radius);
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        bottom: 0;
+    box-shadow: 0px 10px 44px 16px var(--shadow-color);
+    -moz-box-shadow: 0px 10px 44px 16px var(--shadow-color);
+    -webkit-box-shadow: 0px 10px 44px 16px var(--shadow-color);
+    border-radius: var(--border-radius);
+  }
+}
 
-        background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) var(--default-shadow),rgba(0,0,0,1) 100%);
-        background: linear-gradient(top, rgba(255, 255, 255, 0) var(--default-shadow),rgba(0,0,0,1) 10%);
-        background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) var(--default-shadow),rgba(0,0,0,1) 100%);
-        opacity: 0.8;
+.media::before {
+  content: "";
+  border-radius: var(--border-radius);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  z-index: 500;
 
-        transition: opacity 0.5s;
-    }
+  background: -moz-linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) var(--default-shadow),
+    rgba(0, 0, 0, 1) 100%
+  );
+  background: linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) var(--default-shadow),
+    rgba(0, 0, 0, 1) 10%
+  );
+  background: -webkit-linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) var(--default-shadow),
+    rgba(0, 0, 0, 1) 100%
+  );
+  opacity: 0.8;
 
-    .media:hover::before{
-        opacity: 1;
-        background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) var(--hover-shadow),rgba(0,0,0,1) 100%);
-        background: linear-gradient(top, rgba(255, 255, 255, 0) var(--hover-shadow),rgba(0,0,0,1) 10%);
-        background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) var(--hover-shadow),rgba(0,0,0,1) 100%);
-    }
+  transition: opacity 0.5s;
+}
+
+.media:hover::before {
+  opacity: 1;
+  background: -moz-linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) var(--hover-shadow),
+    rgba(0, 0, 0, 1) 100%
+  );
+  background: linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) var(--hover-shadow),
+    rgba(0, 0, 0, 1) 10%
+  );
+  background: -webkit-linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) var(--hover-shadow),
+    rgba(0, 0, 0, 1) 100%
+  );
+}
 </style>
