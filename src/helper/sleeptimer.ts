@@ -9,7 +9,7 @@ export default function useSleepTimer(seconds: number, callback: CallableFunctio
         if (sleepTimerID.value != -1) return;
         sleepTimerID.value = setInterval(() => {
             currentSleepTime.value -= 1;
-            fetch("http://192.168.178.83:3000/ping")
+
             console.log("sleep timer", currentSleepTime.value);
             if (currentSleepTime.value == 0){
                 clearInterval(sleepTimerID.value);
