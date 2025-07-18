@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MediaComponent from "../components/media-component.vue";
 import { Media } from "../types";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import APIConnector from "../helper/APIConnector"; 
     
 const media = ref(Array<Media>());
