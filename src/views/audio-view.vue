@@ -3,9 +3,10 @@
     import { useRoute } from 'vue-router';
     import chapterComponent from '../components/chapter-component.vue';
     import { DetailAudio } from '../types';
+    import APIConnector from '../helper/APIConnector';
     
     const posterPath = ref('');
-    const audioSrcBase = ref('http://192.168.178.120:8000/stream-audio/');
+    const audioSrcBase = ref(APIConnector.getAudioStreamEndpoint());
     const currentAudioID = ref('');
     const audioElement = ref<HTMLAudioElement | null>(null);
     const route = useRoute();
@@ -32,15 +33,14 @@
     }
 
     function fetchData(){
-        fetch('http://192.168.178.120:8000/detail/' + route.params.entryID + "/2").then(res => res.json())
-        .then(d => data.value = d) // set data
+        APIConnector.getDetailOf(route.params.entryID as string, "2").then(d => data.value = d) // set data
         .then(() => currentAudioID.value = data.value.audio[0].audioID.toString()); // set first chapter
     }
     
     fetchData();
 
     onMounted(() =>{
-        posterPath.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`
+        posterPath.value = APIConnector.getPosterPathByEntryID(route.params.entryID as string);
     })
 </script>
 

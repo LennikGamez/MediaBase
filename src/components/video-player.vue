@@ -7,6 +7,7 @@
     import LoaderComponent from './loader-component.vue';
     import SubtitleComponent from './subtitle-component.vue';
     import SubtitleManager from '../helper/subtitle-manager';
+import APIConnector from '../helper/APIConnector';
 
     var timelineDrag = false;
     var fullscreenState = false;
@@ -264,11 +265,12 @@
      * @param languages 
      */
     function getVideoSrc(type: number, entryID: number, episodeID: number | null, languages: string[]): string{        
+        const language = selectPreferredOrAvailableLanguage(languages);
         switch (type){
             case 0: // movie
-                return `http://192.168.178.120:8000/stream/${entryID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return APIConnector.getStreamEndpoint(entryID.toString(), language);
             case 1:
-                return `http://192.168.178.120:8000/stream/show/${entryID}/episode/${episodeID}/${selectPreferredOrAvailableLanguage(languages)}`;
+                return APIConnector.getStreamEndpointForEpisode(entryID.toString(), (episodeID as number).toString(), language);
             
             default:
                 return ''; 
@@ -350,7 +352,7 @@
 
 
     onMounted(() => {
-        posterSrc.value = `http://192.168.178.120:8000/poster/${route.params.entryID}`;
+        posterSrc.value = APIConnector.getPosterPathByEntryID(route.params.entryID as string);
     })
 </script>
 

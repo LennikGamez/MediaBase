@@ -3,11 +3,12 @@
     import MediaComponent from "../components/media-component.vue";
     import { Media } from "../types";
     import { ref } from "vue";
+    import APIConnector from "../helper/APIConnector"; 
     
     const media = ref(Array<Media>());
     const searchInput = ref(""); 
     function fetchMedia(){
-        fetch('http://192.168.178.120:8000/media').then(res => res.json()).then(data => media.value = data)
+        APIConnector.getLibraryData().then(data => media.value = data)
     }
 
     fetchMedia();

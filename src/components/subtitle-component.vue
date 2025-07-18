@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import { ref, watch } from 'vue';
+import APIConnector from '../helper/APIConnector';
     const props = defineProps({
         subID: Number
     })
     const subID = ref(props.subID);
-    const baseURL = "http://192.168.178.120:8000/subtitle/"
+    const baseURL = APIConnector.getEndpointURL("/subtitle/");
 
     const blobSrc = ref('');
     const subLang = ref('');
