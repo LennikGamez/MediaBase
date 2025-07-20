@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { inject, Ref, ref } from 'vue';
+    import { inject, onMounted, Ref, ref } from 'vue';
     import LanguagePop from './popover/language-popover.vue';
     import SubtitlePop from './popover/subtitle-popover.vue';
     import { useRoute } from 'vue-router';
@@ -344,12 +344,15 @@
         currentEpisodeName = name;
     }
 
-    function setPosterPath(path: string){
-        posterSrc.value = APIConnector.getPosterURLByPosterPath(path);
+    function setPosterPath(){
+        posterSrc.value = APIConnector.getPosterURL(route.params.name as string, route.params.type as string);
     }
 
-    defineExpose({play, setCurrentEpisodeName, setPosterPath});
+    defineExpose({play, setCurrentEpisodeName});
 
+    onMounted(()=>{
+        setPosterPath();
+    })
 </script>
 
 

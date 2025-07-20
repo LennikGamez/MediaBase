@@ -1,7 +1,6 @@
 
 export type Media = {
     name: string,
-    poster: string,
     type: number
 }
 

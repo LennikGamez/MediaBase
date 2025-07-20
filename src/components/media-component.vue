@@ -12,7 +12,7 @@
         }
     });
 
-    const posterLink = ref(APIConnector.getPosterURLByPosterPath(props.data.poster));
+    const posterLink = ref(APIConnector.getPosterURL(props.data.name, props.data.type));
 
     const wrapper = ref(HTMLDivElement)
 
