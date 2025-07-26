@@ -1,3 +1,7 @@
+export type LibraryFilter = {
+  group: string,
+  groupType: number
+}
 
 export default class APIConnector {
   public static IP_ADDRESS: string = "http://192.168.178.83:3000";
@@ -13,24 +17,31 @@ export default class APIConnector {
   }
 
   // general
-  public static getPosterURL(name: string, type: string | number){
-    return this.getEndpointURL(`/poster/${name}/${type}`);
+  public static getPosterURL(name: string, type: string | number, group: string | undefined){
+    if (group){
+      return this.getEndpointURL(`/poster/${name}/${type}?group=${group}`);
+    }
+    return this.getEndpointURL(`/poster/${name}/${type}`)
   }
   
   // library view
-  public static async getLibraryData(){
+  public static async getLibraryData(options?: LibraryFilter){
+    if(options && options.group && options.groupType >= 0){
+      return await this.fetchEndpoint(`/library?group=${options.group}&grouptype=${options.groupType}`)
+    }
     return await this.fetchEndpoint("/library");
   } 
 
   // detail view
-  public static async getDetailOf(name: string, type: string){
+  public static async getDetailOf(name: string, type: string, group: string = ""){
+    const path = group + "/" + name;
     switch(type){
       case "0":
-        return await this.fetchEndpoint(`/movie/${name}`);
+        return await this.fetchEndpoint(`/movie/${path}`);
       case "1":
-        return await this.fetchEndpoint(`/series/${name}`);
+        return await this.fetchEndpoint(`/series/${path}`);
       case "2":
-        return await this.fetchEndpoint(`/audio/${name}`);
+        return await this.fetchEndpoint(`/audio/${path}`);
       default:
         break
     }
