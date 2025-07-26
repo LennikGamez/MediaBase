@@ -126,7 +126,6 @@ function playNextEpisode(currentEpisodeName: string) {
             v-for="(episode, index) in item.episodes"
             :key="index"
             :name="episode.name"
-            :description="'s'"
             :episodePath="episode.path"
             @startEpisode="onEpisodeStart"
           />

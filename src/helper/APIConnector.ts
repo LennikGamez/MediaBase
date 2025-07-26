@@ -73,6 +73,9 @@ export default class APIConnector {
   }
 
 
+  public static async getEpisodeDescription(episodePath: string){
+    return await this.fetchEndpoint("/episode-description?dir=" + episodePath);
+  }
   public static async getEpisode(episodePath: string){
     return await this.fetchEndpoint("/episode?dir=" + episodePath);
   }
