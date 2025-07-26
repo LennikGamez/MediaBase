@@ -690,6 +690,8 @@ video::cue {
 
 img {
   max-width: 100%;
-  width: 100%;
+  max-height: 100vh;
+  height: 100vh;
+  object-fit: cover;
 }
 </style>
