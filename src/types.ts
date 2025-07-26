@@ -1,7 +1,8 @@
 
 export type Media = {
     name: string,
-    type: number
+    type: number,
+    group: string
 }
 
 
