@@ -1,15 +1,30 @@
 <script setup lang="ts">
 import MediaComponent from "../components/media-component.vue";
 import { Media } from "../types";
-import { computed, ref } from "vue";
-import APIConnector from "../helper/APIConnector"; 
-    
+import { computed, ref, watch } from "vue";
+import APIConnector from "../helper/APIConnector";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 const media = ref(Array<Media>());
-const searchInput = ref(""); 
-function fetchMedia(){
-    APIConnector.getLibraryData().then(data => media.value = data)
+const searchInput = ref("");
+
+
+function fetchMedia() {
+  const group = route.query.group as string;
+  const groupType = parseInt(route.query.grouptype as string);
+  // group url parsing
+  if (group && groupType >= 0) {
+    APIConnector.getLibraryData({ group, groupType }).then(
+      (data) => (media.value = data),
+    );
+    return;
+  }
+  // library without any groups specified
+  APIConnector.getLibraryData().then((data) => (media.value = data));
 }
 
+watch(() => route.query, fetchMedia);
 fetchMedia();
 
 function stringIncludes(a: string, b: string) {
@@ -82,7 +97,6 @@ nav {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-
 
 #library-container::-webkit-scrollbar {
   display: none;
