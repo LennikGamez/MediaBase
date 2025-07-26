@@ -1,4 +1,3 @@
-, setPosterPath
 <script lang="ts" setup>
 import { useRoute, useRouter } from "vue-router";
 import { Media } from "../types";
@@ -59,7 +58,7 @@ function rerouteToDetails() {
 
 <template>
   <div class="media" ref="wrapper" @click="onClick">
-    <img :src="posterLink" loading="lazy" class="skeleton" />
+    <img :src="posterLink" class="skeleton" />
     <h4 class="title">{{ props.data.name }}</h4>
   </div>
 </template>
