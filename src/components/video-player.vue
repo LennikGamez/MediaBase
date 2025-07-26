@@ -384,7 +384,7 @@ onMounted(() => {
 <template>
   <div class="video-player" ref="videoPlayerContainer">
     <LoaderComponent ref="loader" />
-    <img :src="posterSrc" ref="poster" />
+    <img :src="posterSrc" ref="poster" id="poster" />
     <div class="video-container paused" ref="videoContainer">
       <div class="video-controls-container">
         <div
@@ -479,7 +479,7 @@ onMounted(() => {
 .hidden {
   display: none;
 }
-img:not(.hidden) ~ .video-container {
+#poster:not(.hidden) ~ .video-container {
   display: none;
 }
 .popoverInvoker {
@@ -688,7 +688,7 @@ video::cue {
   display: block;
 }
 
-img {
+#poster {
   max-width: 100%;
   max-height: 100vh;
   height: 100vh;
