@@ -1,6 +1,10 @@
+export type LibraryFilter = {
+  group: string,
+  groupType: number
+}
 
 export default class APIConnector {
-  public static IP_ADDRESS: string = "http://192.168.178.120:8000";
+  public static IP_ADDRESS: string = "http://192.168.178.83:3000";
 
   private static async fetchEndpoint(endpoint: string){
     const response = await fetch(
@@ -13,18 +17,34 @@ export default class APIConnector {
   }
 
   // general
-  public static getPosterPathByEntryID(entryID: string){
-    return this.IP_ADDRESS + `/poster/${entryID}`
+  public static getPosterURL(name: string, type: string | number, group: string | undefined){
+    if (group){
+      return this.getEndpointURL(`/poster/${name}/${type}?group=${group}`);
+    }
+    return this.getEndpointURL(`/poster/${name}/${type}`)
   }
   
   // library view
-  public static async getLibraryData(){
-    return await this.fetchEndpoint("/media");
+  public static async getLibraryData(options?: LibraryFilter){
+    if(options && options.group && options.groupType >= 0){
+      return await this.fetchEndpoint(`/library?group=${options.group}&grouptype=${options.groupType}`)
+    }
+    return await this.fetchEndpoint("/library");
   } 
 
   // detail view
-  public static async getDetailOf(entryID: string, type: string){
-    return await this.fetchEndpoint(`/detail/${entryID}/${type}`);
+  public static async getDetailOf(name: string, type: string, group: string = ""){
+    const path = group + "/" + name;
+    switch(type){
+      case "0":
+        return await this.fetchEndpoint(`/movie/${path}`);
+      case "1":
+        return await this.fetchEndpoint(`/series/${path}`);
+      case "2":
+        return await this.fetchEndpoint(`/audio/${path}`);
+      default:
+        break
+    }
   }
   public static async getAvailableLanguagesByEntryID(entryID: number){
     return await this.fetchEndpoint(`/available-languages/${entryID}`);
@@ -40,18 +60,23 @@ export default class APIConnector {
 
 
   // video player component
-  public static getStreamEndpoint(entryID: string, language: string){
-    return this.getEndpointURL(`/stream/${entryID}/${language}`)
-  }
-  public static getStreamEndpointForEpisode(entryID: string, episodeID: string, language: string){
-    return this.getEndpointURL(`/stream/show/${entryID}/episode/${episodeID}/${language}`)
+  public static getStreamEndpoint(filePath: string){
+    return this.getEndpointURL(`/stream?file=${filePath}`)
   }
 
   // subitile manager
-  public static async getSubtitlesForMovie(movieID: number){
-    return await this.fetchEndpoint("/subtitles-movie/"+movieID)
+  public static async getSubtitle(path: string){
+    return await this.fetchEndpoint("/subtitle?file="+path)
   }
   public static async getSubtitlesForEpisode(episodeID: number){
     return await this.fetchEndpoint("/subtitles-episode/"+episodeID);
+  }
+
+
+  public static async getEpisodeDescription(episodePath: string){
+    return await this.fetchEndpoint("/episode-description?dir=" + episodePath);
+  }
+  public static async getEpisode(episodePath: string){
+    return await this.fetchEndpoint("/episode?dir=" + episodePath);
   }
 }

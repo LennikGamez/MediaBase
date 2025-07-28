@@ -1,40 +1,64 @@
 <script lang="ts" setup>
-    import { useRouter } from 'vue-router';
-    import { Media } from '../types';
-    import { ref } from 'vue';
-    import APIConnector from '../helper/APIConnector'; 
+import { useRoute, useRouter } from "vue-router";
+import { Media } from "../types";
+import { ref } from "vue";
+import APIConnector from "../helper/APIConnector";
 
-    const router = useRouter();
-    const props = defineProps({
-        data: {
-            type: Object as () => Media,
-            required: true
-        }
+const router = useRouter();
+const props = defineProps({
+  data: {
+    type: Object as () => Media,
+    required: true,
+  },
+});
+
+const route = useRoute();
+const posterLink = ref(
+  APIConnector.getPosterURL(
+    props.data.name,
+    props.data.type,
+    route.query.group as string,
+  ),
+);
+
+const wrapper = ref(HTMLDivElement);
+
+function onClick() {
+  if (props.data.group) {
+    // if the media component is representing a group the router navigates to library view with the new group as query
+    router.push({
+      path: "/",
+      query: {
+        group: props.data.group,
+        grouptype: props.data.type,
+      },
     });
+    return;
+  }
+  rerouteToDetails();
+}
 
-    const posterLink = ref(APIConnector.getPosterPathByEntryID(props.data.entryID.toString()));
-
-    const wrapper = ref(HTMLDivElement)
-
-    function rerouteToDetails(){
-        console.log("reroute to details of " + props.data.name);
-        switch (props.data.type) {
-            case 0:
-            case 1:
-                router.push({path: "/detail/" + props.data.entryID + "/" + props.data.type});
-                break;
-            case 2:
-                router.push({path: "/audio/" + props.data.entryID});
-                break;
-
-        }
-    }
-
+function rerouteToDetails() {
+  console.log("reroute to details of " + props.data.name);
+  let group = (route.query.group as string) || "";
+  switch (props.data.type) {
+    case 0:
+    case 1:
+      router.push({
+        path: `/detail/${props.data.name}/${props.data.type}`,
+        query: { group },
+      });
+      break;
+    case 2:
+      router.push({ path: "/audio/" + props.data.name, query: { group } });
+      break;
+  }
+}
 </script>
 
 <template>
-  <div class="media" ref="wrapper" @click="rerouteToDetails">
-    <img :src="posterLink" loading="lazy" class="skeleton" />
+  <div class="media" ref="wrapper" @click="onClick">
+    <img :src="posterLink" class="skeleton" />
     <h4 class="title">{{ props.data.name }}</h4>
   </div>
 </template>

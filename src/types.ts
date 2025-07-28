@@ -1,55 +1,35 @@
 
 export type Media = {
     name: string,
-    entryID: number,
-    type: number
+    type: number,
+    group: string
 }
 
-export type Detail = {
-    detail: {
-        name: string,
-        entryID: number,
-        description: string,
-        posterPath: string,
-        type: number // 0 = movie, 1 = show
-    }
+
+export type Language = {
+    language: string,
+    path: string
+}
+export type Subtitle = Language;
+
+export type MovieDetails = {
+    languages: Language[],
+    subtitles: Language[],
+    posterPath: string
 }
 
-export type MovieDetail = Detail & {
-    detail: {
-        movieID: number
-    }
+export type Season ={
+    seasonNum: number,
+    episodes: Episode[]
 }
-
 export type Episode = {
-    episodeID: number,
-    name: string
-    description: string
-    season: number
+    name: string,
+    path: string
+}
+export type SeriesDetails = {
+    seasons: Season[]    
 }
 
-export type DetailShow = Detail & {
-    seasons: {
-        [key: number]: Episode[]
-    }
-}
-
-export type DetailMovie = MovieDetail & {
-    movieData: {
-        videoID: number,
-        videoPath: string,
-        language: string,
-        movieID: number,
-        episodeID: number | null
-    }
-}
-
-export type DetailAudio = Detail & {
-    audio: [
-        {
-            audioID: number,
-            name: string,
-            number: number
-        }
-    ]
+export type AudioDetails = {
+    audioFiles: string[]
 }

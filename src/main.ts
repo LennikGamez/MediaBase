@@ -9,8 +9,8 @@ import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [
   { path: "/", component: LibraryView },
-  { path: "/audio/:entryID", component: audioView },
-  { path: "/detail/:entryID/:type", component: DetailView },
+  { path: "/audio/:name", component: audioView },
+  { path: "/detail/:name/:type", component: DetailView },
 ];
 
 const router = createRouter({
