@@ -4,7 +4,7 @@ import { ref } from "vue";
 const loader = ref<HTMLDivElement | null>(null);
 function hide() {
   if (!loader.value) return;
-  // loader.value.classList.add("hide");
+  loader.value.classList.add("hide");
 }
 
 function show() {
