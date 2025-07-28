@@ -654,10 +654,11 @@ onMounted(() => {
   background-color: rgb(209, 201, 211);
   border-radius: 50%;
   position: absolute;
-  transform: translateY(-25%);
+  transform: translateY(-25%) translateX(-50%);
   left: calc(var(--progress) * 100%);
   width: calc(var(--timeline-size) * 2);
   aspect-ratio: 1;
+  z-index: 102;
 }
 
 .timeline-container:hover .thumb-indicator {
