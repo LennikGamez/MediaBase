@@ -35,8 +35,8 @@ const subTitleData = ref<{ data: string; language: string }[]>([]);
 const loader = ref<InstanceType<typeof LoaderComponent> | null>(null);
 
 const inactivityTimer = new InactivityTimer(
-  () => hideCursor(),
-  () => showCursor(),
+  () => hideOverlay(),
+  () => showOverlay(),
   2000,
 );
 
@@ -60,27 +60,27 @@ document.addEventListener("fullscreenchange", () => {
 });
 
 document.addEventListener("mouseup", (e) => {
-  inactivityTimer.restart();
   if (!timelineDrag) return;
+  inactivityTimer.restart();
   timelineDrag = false;
   videoElement.value?.play();
   setTimelineByMouseEvent(e);
 });
 document.addEventListener("touchend", () => {
-  inactivityTimer.restart();
   if (!timelineDrag) return;
+  inactivityTimer.restart();
   timelineDrag = false;
   videoElement.value?.play();
 });
 
 document.addEventListener("mousemove", (event) => {
-  inactivityTimer.restart();
   if (!timelineDrag) return;
+  inactivityTimer.restart();
   setTimelineByMouseEvent(event);
 });
 document.addEventListener("touchmove", (event) => {
-  inactivityTimer.restart();
   if (!timelineDrag) return;
+  inactivityTimer.restart();
   setTimelineByMouseEvent(event.touches[0]);
 });
 
@@ -141,14 +141,14 @@ function hideLoader() {
   loader.value.hide();
 }
 
-function hideCursor() {
-  videoContainer.value?.classList.add("cursor-none");
+function hideOverlay() {
+  videoContainer.value?.classList.add("overlay-hidden");
 
   setSubtitleLine(-1);
 }
 
-function showCursor() {
-  videoContainer.value?.classList.remove("cursor-none");
+function showOverlay() {
+  videoContainer.value?.classList.remove("overlay-hidden");
 
   setSubtitleLine(subtitleShift);
 }
@@ -185,7 +185,7 @@ function onPlay() {
   if (!videoContainer.value) return;
   videoContainer.value.classList.remove("paused");
 
-  if (videoContainer.value.classList.contains("cursor-none")) {
+  if (videoContainer.value.classList.contains("overlay-hidden")) {
     setSubtitleLine(-1);
   }
 }
@@ -365,26 +365,23 @@ function onVideoEnd() {
   }
 }
 
-const MAX_DOUBLE_CLICK_TIME = 500; // in ms
-let last_click_time = 0;
-function onTouch(e: TouchEvent) {
-  const timeBetweenClicks = e.timeStamp - last_click_time;
-  last_click_time = e.timeStamp;
-  if (timeBetweenClicks > MAX_DOUBLE_CLICK_TIME) {
-    return;
-  }
-  e.preventDefault();
-  onDoubleTouch(e);
-}
-
-function onDoubleTouch(e: TouchEvent) {
+function onDoubleClick(e: MouseEvent) {
   if (!videoElement.value) return;
   const boundingRect = videoElement.value.getBoundingClientRect();
   // check on which side the touch occured
-  if (e.touches[0].clientX >= boundingRect.width / 2) {
+  if (e.clientX >= boundingRect.width / 2) {
     seekTimeline(videoStepSize);
   } else {
     seekTimeline(-videoStepSize);
+  }
+}
+
+function onVideoClick() {
+  // show overlay when video is clicked
+  if (!videoContainer.value) return;
+  if (videoContainer.value.classList.contains("overlay-hidden")) {
+    inactivityTimer.restart();
+    return;
   }
 }
 
@@ -409,7 +406,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="video-player" ref="videoPlayerContainer">
+  <div
+    class="video-player"
+    ref="videoPlayerContainer"
+    @mousemove="() => inactivityTimer.restart()"
+    @dblclick="onDoubleClick"
+    @click="onVideoClick"
+  >
     <LoaderComponent ref="loader" />
     <img :src="posterSrc" ref="poster" id="poster" />
     <div class="video-container paused" ref="videoContainer">
@@ -490,7 +493,6 @@ onMounted(() => {
         @waiting="showLoader"
         @playing="hideLoader"
         @ended="onVideoEnd"
-        @touchstart="onTouch"
       >
         <source id="source" :src="videoSrc" />
         <SubtitleComponent
@@ -555,10 +557,10 @@ onMounted(() => {
   z-index: 99;
 }
 
-.video-container.cursor-none {
+.video-container.overlay-hidden {
   pointer-events: none;
 }
-.video-player:has(.video-container.cursor-none) {
+.video-player:has(.video-container.overlay-hidden:not(.paused)) {
   cursor: none;
 }
 .fullscreen {
@@ -573,8 +575,8 @@ onMounted(() => {
   z-index: 1000;
 }
 
-.video-container:not(.cursor-none) .video-controls-container,
-.video-container:not(.cursor-none).video-container::before {
+.video-container:not(.overlay-hidden) .video-controls-container,
+.video-container:not(.overlay-hidden).video-container::before {
   opacity: 1;
 }
 
