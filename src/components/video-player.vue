@@ -40,7 +40,7 @@ const inactivityTimer = new InactivityTimer(
   2000,
 );
 
-const videoStepSize = 5;
+const videoStepSize = 15;
 
 const subtitleShift = -4;
 
@@ -101,16 +101,20 @@ document.addEventListener("keypress", (event) => {
 document.addEventListener("keydown", (event) => {
   if (!videoElement.value) return;
   if (event.key === "ArrowRight") {
-    videoElement.value.currentTime += videoStepSize;
-    updateTimeline();
-    inactivityTimer.restart();
+    seekTimeline(videoStepSize);
   }
   if (event.key === "ArrowLeft") {
-    videoElement.value.currentTime -= videoStepSize;
-    updateTimeline();
-    inactivityTimer.restart();
+    seekTimeline(-videoStepSize);
   }
 });
+
+function seekTimeline(step: number) {
+  // positive seek forward, negative seek backwards
+  if (!videoElement.value) return;
+  videoElement.value.currentTime += step;
+  updateTimeline();
+  inactivityTimer.restart();
+}
 
 function formatTime(time: number) {
   if (isNaN(time)) return formatTime(0);
@@ -361,6 +365,29 @@ function onVideoEnd() {
   }
 }
 
+const MAX_DOUBLE_CLICK_TIME = 500; // in ms
+let last_click_time = 0;
+function onTouch(e: TouchEvent) {
+  const timeBetweenClicks = e.timeStamp - last_click_time;
+  last_click_time = e.timeStamp;
+  if (timeBetweenClicks > MAX_DOUBLE_CLICK_TIME) {
+    return;
+  }
+  e.preventDefault();
+  onDoubleTouch(e);
+}
+
+function onDoubleTouch(e: TouchEvent) {
+  if (!videoElement.value) return;
+  const boundingRect = videoElement.value.getBoundingClientRect();
+  // check on which side the touch occured
+  if (e.touches[0].clientX >= boundingRect.width / 2) {
+    seekTimeline(videoStepSize);
+  } else {
+    seekTimeline(-videoStepSize);
+  }
+}
+
 let currentEpisodeName = "";
 function setCurrentEpisodeName(name: string) {
   currentEpisodeName = name;
@@ -463,6 +490,7 @@ onMounted(() => {
         @waiting="showLoader"
         @playing="hideLoader"
         @ended="onVideoEnd"
+        @touchstart="onTouch"
       >
         <source id="source" :src="videoSrc" />
         <SubtitleComponent
