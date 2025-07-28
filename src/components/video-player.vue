@@ -695,6 +695,13 @@ onMounted(() => {
   display: block;
 }
 
+@media (hover: none) {
+  .video-container:not(.overlay-hidden) .thumb-indicator,
+  .video-container.paused .thumb-indicator {
+    display: block;
+  }
+}
+
 video {
   display: flex;
   max-width: 100%;
