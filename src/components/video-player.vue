@@ -526,7 +526,7 @@ onMounted(() => {
 
 .video-player {
   --hover-fade-time: 0.3s;
-  --timeline-size: clamp(4px, 0.2vw, 0.2vw);
+  --timeline-size: clamp(0.2rem, 0.8vw, 0.8vw);
   --video-control-inset: 8px;
   --timeline-drag-buffer: 32px;
   display: flex;
@@ -625,7 +625,7 @@ onMounted(() => {
 .time-display {
   display: flex;
   align-items: center;
-  font-size: clamp(1rem, 1vw, 1vw);
+  font-size: clamp(1rem, 1.4vw, 1.4vw);
 }
 
 .control-element {
@@ -636,7 +636,7 @@ onMounted(() => {
   padding: 0px;
   align-items: center;
   display: flex;
-  width: clamp(24px, 1.5vw, 1.5vw);
+  width: clamp(24px, 2vw, 2vw);
 }
 .control-element:hover > img {
   cursor: pointer;
@@ -656,14 +656,15 @@ onMounted(() => {
   background-color: rgba(255, 255, 255, 0.5);
   z-index: 101;
   transition: opacity var(--hover-fade-time) ease-in-out;
+  border-radius: 0.8rem;
 }
 
 .timeline::before {
   content: "";
   position: absolute;
   height: var(--timeline-size);
-  left: 0;
-  right: 0;
+  left: -1px;
+  right: calc(100% - var(--progress) * 100%);
   background: linear-gradient(
     90deg,
     rgba(2, 0, 36, 1) 0%,
@@ -672,11 +673,12 @@ onMounted(() => {
   );
   z-index: 101;
   clip-path: polygon(
-    0% 0%,
-    calc(var(--progress) * 100%) 0%,
-    calc(var(--progress) * 100%) 100%,
-    0% 100%
+    0% -1px,
+    100% -1px,
+    100% 150%,
+    0% 150%
   ); /* Clip the background */
+  border-radius: 0.8rem;
 }
 
 .thumb-indicator {
