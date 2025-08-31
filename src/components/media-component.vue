@@ -15,7 +15,7 @@ const props = defineProps({
 const route = useRoute();
 const posterLink = ref(
   APIConnector.getPosterURL(
-    props.data.name,
+    props.data.group || props.data.name, // either get the poster of the group or, if thats not available, the poster of the entry name
     props.data.type,
     route.query.group as string,
   ),
