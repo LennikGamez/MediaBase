@@ -638,6 +638,9 @@ onMounted(() => {
   display: flex;
   width: clamp(24px, 2vw, 2vw);
 }
+.control-element > img {
+  width: 100%;
+}
 .control-element:hover > img {
   cursor: pointer;
   opacity: 0.5;
